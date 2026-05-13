@@ -1,0 +1,365 @@
+{
+  "scene_name": "FormalWarehouse",
+  "developer_hints": "Warehouse pick-and-place training: trainees pick color-coded boxes (Red, Blue, Green, Orange, Purple, Cyan, Yellow, Pink) from various warehouse zones (Storage A/B, Receiving, Order Picking, Main Aisle, Shipping) and place them at matching color-coded target markers in the Staging area or opposite storage zone. 8 tasks total, each with navigate-pick-place subtasks.",
+  "objects": [
+    {
+      "name": "Floor",
+      "path": "Building_Collider",
+      "position": [24.67, 0.0, 34.74],
+      "layer": "Default",
+      "tags": ["Ground"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "MeshCollider"],
+      "bounds_size": [37.49, 0.1, 64.68],
+      "children": []
+    },
+    {
+      "name": "Wall_North",
+      "path": "Building/Building/Bldg_WallPanel_North",
+      "position": [24.67, 2.5, 67.08],
+      "layer": "Default",
+      "tags": ["Obstacle"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "BoxCollider"],
+      "bounds_size": [37.49, 5.0, 0.3],
+      "children": []
+    },
+    {
+      "name": "Wall_South",
+      "path": "Building/Building/Bldg_WallPanel_South",
+      "position": [24.67, 2.5, 2.41],
+      "layer": "Default",
+      "tags": ["Obstacle"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "BoxCollider"],
+      "bounds_size": [37.49, 5.0, 0.3],
+      "children": []
+    },
+    {
+      "name": "Wall_West",
+      "path": "Building/Building/Bldg_WallPanel_West",
+      "position": [5.93, 2.5, 34.74],
+      "layer": "Default",
+      "tags": ["Obstacle"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "BoxCollider"],
+      "bounds_size": [0.3, 5.0, 64.68],
+      "children": []
+    },
+    {
+      "name": "Wall_East",
+      "path": "Building/Building/Bldg_WallPanel_East",
+      "position": [43.42, 2.5, 34.74],
+      "layer": "Default",
+      "tags": ["Obstacle"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "BoxCollider"],
+      "bounds_size": [0.3, 5.0, 64.68],
+      "children": []
+    },
+    {
+      "name": "Shelf_0",
+      "path": "Shelves/Shelf_0",
+      "position": [8.0, 3.53, 10.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.14, 7.06, 15.52],
+      "children": []
+    },
+    {
+      "name": "Shelf_1",
+      "path": "Shelves/Shelf_1",
+      "position": [8.0, 3.53, 26.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.14, 7.06, 15.52],
+      "children": []
+    },
+    {
+      "name": "Shelf_2",
+      "path": "Shelves/Shelf_2",
+      "position": [8.0, 3.53, 42.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.14, 7.06, 15.52],
+      "children": []
+    },
+    {
+      "name": "Shelf_3",
+      "path": "Shelves/Shelf_3",
+      "position": [14.0, 3.53, 10.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.14, 7.06, 15.52],
+      "children": []
+    },
+    {
+      "name": "Shelf_4",
+      "path": "Shelves/Shelf_4",
+      "position": [14.0, 3.53, 26.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.14, 7.06, 15.52],
+      "children": []
+    },
+    {
+      "name": "Shelf_5",
+      "path": "Shelves/Shelf_5",
+      "position": [14.0, 3.53, 42.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.14, 7.06, 15.52],
+      "children": []
+    },
+    {
+      "name": "Shelf_6",
+      "path": "Shelves/Shelf_6",
+      "position": [34.0, 3.53, 10.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.14, 7.06, 15.52],
+      "children": []
+    },
+    {
+      "name": "Shelf_7",
+      "path": "Shelves/Shelf_7",
+      "position": [34.0, 3.53, 26.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.14, 7.06, 15.52],
+      "children": []
+    },
+    {
+      "name": "Shelf_8",
+      "path": "Shelves/Shelf_8",
+      "position": [34.0, 3.53, 42.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.14, 7.06, 15.52],
+      "children": []
+    },
+    {
+      "name": "Shelf_9",
+      "path": "Shelves/Shelf_9",
+      "position": [40.0, 3.53, 10.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.14, 7.06, 15.52],
+      "children": []
+    },
+    {
+      "name": "Shelf_10",
+      "path": "Shelves/Shelf_10",
+      "position": [40.0, 3.53, 26.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.14, 7.06, 15.52],
+      "children": []
+    },
+    {
+      "name": "Shelf_11",
+      "path": "Shelves/Shelf_11",
+      "position": [40.0, 3.53, 42.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.14, 7.06, 15.52],
+      "children": []
+    },
+    {
+      "name": "Box_0",
+      "path": "Box_0",
+      "position": [16.0, 0.54, 10.0],
+      "layer": "Default",
+      "tags": ["Interactable"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "Rigidbody", "XRGrabInteractable", "BoxCollider"],
+      "bounds_size": [1.05, 0.82, 1.03],
+      "children": []
+    },
+    {
+      "name": "Box_1",
+      "path": "Box_1",
+      "position": [16.0, 0.29, 16.0],
+      "layer": "Default",
+      "tags": ["Interactable"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "Rigidbody", "XRGrabInteractable", "BoxCollider"],
+      "bounds_size": [0.93, 0.33, 1.04],
+      "children": []
+    },
+    {
+      "name": "Box_2",
+      "path": "Box_2",
+      "position": [16.0, 0.32, 22.0],
+      "layer": "Default",
+      "tags": ["Interactable"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "Rigidbody", "XRGrabInteractable", "BoxCollider"],
+      "bounds_size": [1.05, 0.37, 1.04],
+      "children": []
+    },
+    {
+      "name": "Box_3",
+      "path": "Box_3",
+      "position": [16.0, 0.54, 28.0],
+      "layer": "Default",
+      "tags": ["Interactable"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "Rigidbody", "XRGrabInteractable", "BoxCollider"],
+      "bounds_size": [1.05, 0.82, 1.03],
+      "children": []
+    },
+    {
+      "name": "Box_4",
+      "path": "Box_4",
+      "position": [16.0, 0.54, 34.0],
+      "layer": "Default",
+      "tags": ["Interactable"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "Rigidbody", "XRGrabInteractable", "BoxCollider"],
+      "bounds_size": [1.05, 0.82, 1.03],
+      "children": []
+    },
+    {
+      "name": "Box_5",
+      "path": "Box_5",
+      "position": [16.0, 0.54, 38.0],
+      "layer": "Default",
+      "tags": ["Interactable"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "Rigidbody", "XRGrabInteractable", "BoxCollider"],
+      "bounds_size": [1.05, 0.82, 1.03],
+      "children": []
+    },
+    {
+      "name": "Box_6",
+      "path": "Box_6",
+      "position": [16.0, 0.54, 43.0],
+      "layer": "Default",
+      "tags": ["Interactable"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "Rigidbody", "XRGrabInteractable", "BoxCollider"],
+      "bounds_size": [1.05, 0.82, 1.03],
+      "children": []
+    },
+    {
+      "name": "Box_7",
+      "path": "Box_7",
+      "position": [16.0, 0.54, 48.0],
+      "layer": "Default",
+      "tags": ["Interactable"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "Rigidbody", "XRGrabInteractable", "BoxCollider"],
+      "bounds_size": [1.05, 0.82, 1.03],
+      "children": []
+    },
+    {
+      "name": "Trolleys",
+      "path": "Trolleys",
+      "position": [26.5, 0.92, 51.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [22.24, 1.83, 11.12],
+      "children": []
+    },
+    {
+      "name": "Vehicles",
+      "path": "Vehicles",
+      "position": [23.51, 1.40, 44.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [10.47, 2.79, 5.67],
+      "children": []
+    },
+    {
+      "name": "PlasticBoxes",
+      "path": "PlasticBoxes",
+      "position": [25.0, 0.40, 32.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [7.03, 0.80, 1.05],
+      "children": []
+    },
+    {
+      "name": "PickZone",
+      "path": "PickZone",
+      "position": [16.0, 0.07, 29.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.07, 0.13, 39.06],
+      "children": []
+    },
+    {
+      "name": "PlaceZone",
+      "path": "PlaceZone",
+      "position": [28.0, 0.32, 31.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.07, 0.63, 43.06],
+      "children": []
+    },
+    {
+      "name": "Worker_1",
+      "path": "Worker_1",
+      "position": [11.0, 0.86, 34.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.82, 1.94, 0.50],
+      "children": []
+    },
+    {
+      "name": "Worker_2",
+      "path": "Worker_2",
+      "position": [37.0, 0.86, 14.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.82, 1.94, 0.50],
+      "children": []
+    },
+    {
+      "name": "Worker_3",
+      "path": "Worker_3",
+      "position": [24.0, 0.86, 52.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [1.82, 1.94, 0.50],
+      "children": []
+    },
+    {
+      "name": "FloorFill",
+      "path": "FloorFill",
+      "position": [24.0, 0.47, 26.0],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshFilter", "MeshRenderer"],
+      "bounds_size": [27.07, 0.95, 37.06],
+      "children": []
+    }
+  ],
+  "interactables": ["Box_0", "Box_1", "Box_2", "Box_3", "Box_4", "Box_5", "Box_6", "Box_7"],
+  "tagged_objects": {
+    "Ground": ["Floor"],
+    "Obstacle": ["Wall_North", "Wall_South", "Wall_West", "Wall_East"],
+    "Interactable": ["Box_0", "Box_1", "Box_2", "Box_3", "Box_4", "Box_5", "Box_6", "Box_7"],
+    "TargetPoint": ["Target_0", "Target_1", "Target_2", "Target_3", "Target_4", "Target_5", "Target_6", "Target_7"],
+    "MainCamera": ["Main Camera"]
+  },
+  "spatial_regions": [
+    { "name": "StorageA", "center": [11.0, 0.0, 28.75], "size": [9.0, 0.01, 52.0] },
+    { "name": "StorageB", "center": [37.75, 0.0, 28.75], "size": [9.0, 0.01, 52.0] },
+    { "name": "Receiving", "center": [24.5, 0.0, 5.25], "size": [35.0, 0.01, 5.5] },
+    { "name": "Staging", "center": [28.0, 0.0, 31.0], "size": [4.0, 0.01, 48.0] },
+    { "name": "OrderPicking", "center": [16.0, 0.0, 31.0], "size": [3.0, 0.01, 46.0] },
+    { "name": "MainAisle", "center": [22.0, 0.0, 29.75], "size": [9.0, 0.01, 54.5] },
+    { "name": "Equipment", "center": [26.5, 0.0, 60.0], "size": [23.0, 0.01, 10.0] },
+    { "name": "Shipping", "center": [24.5, 0.0, 60.5], "size": [35.0, 0.01, 11.0] }
+  ],
+  "hierarchy_roots": ["Building", "Building_Collider", "Outside", "Skybox", "LightFixtures", "Shelves", "ShelfDressing", "PickZone", "Box_0", "Box_1", "Box_2", "Box_3", "PlaceZone", "FloorFill", "Trolleys", "PlasticBoxes", "Vehicles", "Worker_1", "Worker_2", "Worker_3", "Light", "Reflection Probe", "Global Volume", "_Managers", "Box_4", "Box_5", "Box_6", "Box_7", "WarehouseZoneMarkings", "XR Origin (XR Rig)"]
+}

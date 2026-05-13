@@ -1,0 +1,286 @@
+{
+  "scene_name": "SmallFactory",
+  "developer_hints": "Factory assembly line training: trainees perform tasks across 9 workstations including assembly line startup, material staging, robot arm operation, quality inspection, calibration checks, defect sorting, packaging, shipping prep, and lockout/tagout procedures. Zones include RawMaterialStorage, AssemblyLineA, RobotCell, AssemblyLineB, QualityControl, SortingArea, PackingBench, and ShippingDock.",
+  "objects": [
+    {
+      "name": "Floor",
+      "path": "Factory/Structure/Floor",
+      "position": [10.00, 0.00, 9.00],
+      "layer": "Default",
+      "tags": ["Ground"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "MeshCollider"],
+      "bounds_size": [20.50, 0.10, 18.50],
+      "children": []
+    },
+    {
+      "name": "Wall_Back",
+      "path": "Factory/Structure/Wall_Back",
+      "position": [10.00, 2.00, 18.08],
+      "layer": "Default",
+      "tags": ["Obstacle"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "BoxCollider"],
+      "bounds_size": [20.50, 4.00, 0.15],
+      "children": []
+    },
+    {
+      "name": "Wall_Front",
+      "path": "Factory/Structure/Wall_Front",
+      "position": [10.00, 2.00, -0.45],
+      "layer": "Default",
+      "tags": ["Obstacle"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "BoxCollider"],
+      "bounds_size": [20.50, 4.00, 0.15],
+      "children": []
+    },
+    {
+      "name": "Wall_Left",
+      "path": "Factory/Structure/Wall_Left",
+      "position": [-0.08, 2.00, 9.00],
+      "layer": "Default",
+      "tags": ["Obstacle"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "BoxCollider"],
+      "bounds_size": [0.15, 4.00, 18.50],
+      "children": []
+    },
+    {
+      "name": "Wall_Right",
+      "path": "Factory/Structure/Wall_Right",
+      "position": [20.08, 2.00, 9.00],
+      "layer": "Default",
+      "tags": ["Obstacle"],
+      "components": ["Transform", "MeshFilter", "MeshRenderer", "BoxCollider"],
+      "bounds_size": [0.15, 4.00, 18.50],
+      "children": []
+    },
+    {
+      "name": "Assembly Zone",
+      "path": "Factory/Assembly Zone",
+      "position": [9.97, 1.30, 3.50],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshRenderer"],
+      "bounds_size": [18.41, 2.83, 5.50],
+      "children": []
+    },
+    {
+      "name": "QC Zone",
+      "path": "Factory/QC Zone",
+      "position": [10.43, 1.55, 10.08],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshRenderer"],
+      "bounds_size": [19.59, 3.33, 5.16],
+      "children": []
+    },
+    {
+      "name": "Shipping Zone",
+      "path": "Factory/Shipping Zone",
+      "position": [10.12, 1.13, 14.75],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshRenderer"],
+      "bounds_size": [18.24, 2.27, 4.50],
+      "children": []
+    },
+    {
+      "name": "TargetPoint_0",
+      "path": "TargetPoint_0",
+      "position": [7.00, 0.02, 3.00],
+      "layer": "Default",
+      "tags": ["TargetPoint"],
+      "components": ["Transform", "MeshFilter", "BoxCollider", "MeshRenderer"],
+      "bounds_size": [0.80, 0.04, 0.80],
+      "children": []
+    },
+    {
+      "name": "TargetPoint_1",
+      "path": "TargetPoint_1",
+      "position": [11.00, 0.02, 2.50],
+      "layer": "Default",
+      "tags": ["TargetPoint"],
+      "components": ["Transform", "MeshFilter", "BoxCollider", "MeshRenderer"],
+      "bounds_size": [0.80, 0.04, 0.80],
+      "children": []
+    },
+    {
+      "name": "TargetPoint_2",
+      "path": "TargetPoint_2",
+      "position": [17.00, 0.02, 2.50],
+      "layer": "Default",
+      "tags": ["TargetPoint"],
+      "components": ["Transform", "MeshFilter", "BoxCollider", "MeshRenderer"],
+      "bounds_size": [0.80, 0.04, 0.80],
+      "children": []
+    },
+    {
+      "name": "TargetPoint_3",
+      "path": "TargetPoint_3",
+      "position": [5.00, 0.02, 9.00],
+      "layer": "Default",
+      "tags": ["TargetPoint"],
+      "components": ["Transform", "MeshFilter", "BoxCollider", "MeshRenderer"],
+      "bounds_size": [0.80, 0.04, 0.80],
+      "children": []
+    },
+    {
+      "name": "TargetPoint_4",
+      "path": "TargetPoint_4",
+      "position": [12.00, 0.02, 9.50],
+      "layer": "Default",
+      "tags": ["TargetPoint"],
+      "components": ["Transform", "MeshFilter", "BoxCollider", "MeshRenderer"],
+      "bounds_size": [0.80, 0.04, 0.80],
+      "children": []
+    },
+    {
+      "name": "TargetPoint_5",
+      "path": "TargetPoint_5",
+      "position": [18.00, 0.02, 8.50],
+      "layer": "Default",
+      "tags": ["TargetPoint"],
+      "components": ["Transform", "MeshFilter", "BoxCollider", "MeshRenderer"],
+      "bounds_size": [0.80, 0.04, 0.80],
+      "children": []
+    },
+    {
+      "name": "TargetPoint_6",
+      "path": "TargetPoint_6",
+      "position": [3.00, 0.02, 15.00],
+      "layer": "Default",
+      "tags": ["TargetPoint"],
+      "components": ["Transform", "MeshFilter", "BoxCollider", "MeshRenderer"],
+      "bounds_size": [0.80, 0.04, 0.80],
+      "children": []
+    },
+    {
+      "name": "TargetPoint_7",
+      "path": "TargetPoint_7",
+      "position": [8.00, 0.02, 16.00],
+      "layer": "Default",
+      "tags": ["TargetPoint"],
+      "components": ["Transform", "MeshFilter", "BoxCollider", "MeshRenderer"],
+      "bounds_size": [0.80, 0.04, 0.80],
+      "children": []
+    },
+    {
+      "name": "TargetPoint_8",
+      "path": "TargetPoint_8",
+      "position": [16.00, 0.02, 16.00],
+      "layer": "Default",
+      "tags": ["TargetPoint"],
+      "components": ["Transform", "MeshFilter", "BoxCollider", "MeshRenderer"],
+      "bounds_size": [0.80, 0.04, 0.80],
+      "children": []
+    },
+    {
+      "name": "Zone_RawMaterialStorage",
+      "path": "ZoneMarkers/Zone_RawMaterialStorage",
+      "position": [3.00, 0.02, 3.38],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshRenderer"],
+      "bounds_size": [4.57, 0.03, 5.32],
+      "children": []
+    },
+    {
+      "name": "Zone_AssemblyLineA",
+      "path": "ZoneMarkers/Zone_AssemblyLineA",
+      "position": [8.38, 0.02, 3.38],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshRenderer"],
+      "bounds_size": [6.32, 0.03, 5.32],
+      "children": []
+    },
+    {
+      "name": "Zone_RobotCell",
+      "path": "ZoneMarkers/Zone_RobotCell",
+      "position": [13.25, 0.02, 3.38],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshRenderer"],
+      "bounds_size": [3.57, 0.03, 5.32],
+      "children": []
+    },
+    {
+      "name": "Zone_AssemblyLineB",
+      "path": "ZoneMarkers/Zone_AssemblyLineB",
+      "position": [17.13, 0.02, 3.38],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshRenderer"],
+      "bounds_size": [4.32, 0.03, 5.32],
+      "children": []
+    },
+    {
+      "name": "Zone_MainAisle",
+      "path": "ZoneMarkers/Zone_MainAisle",
+      "position": [10.00, 0.02, 6.50],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshRenderer"],
+      "bounds_size": [18.57, 0.03, 1.07],
+      "children": []
+    },
+    {
+      "name": "Zone_QualityControl",
+      "path": "ZoneMarkers/Zone_QualityControl",
+      "position": [7.38, 0.02, 9.75],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshRenderer"],
+      "bounds_size": [13.32, 0.03, 5.57],
+      "children": []
+    },
+    {
+      "name": "Zone_SortingArea",
+      "path": "ZoneMarkers/Zone_SortingArea",
+      "position": [16.63, 0.02, 9.75],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshRenderer"],
+      "bounds_size": [5.32, 0.03, 5.57],
+      "children": []
+    },
+    {
+      "name": "Zone_PackingBench",
+      "path": "ZoneMarkers/Zone_PackingBench",
+      "position": [5.38, 0.02, 14.88],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshRenderer"],
+      "bounds_size": [9.32, 0.03, 4.82],
+      "children": []
+    },
+    {
+      "name": "Zone_ShippingDock",
+      "path": "ZoneMarkers/Zone_ShippingDock",
+      "position": [14.63, 0.02, 14.88],
+      "layer": "Default",
+      "tags": [],
+      "components": ["Transform", "MeshRenderer"],
+      "bounds_size": [9.32, 0.03, 4.82],
+      "children": []
+    }
+  ],
+  "interactables": ["AcceptBin_1", "AcceptBin_2", "AcceptBin_3", "RejectBin_1", "RejectBin_2", "RejectBin_3", "ShipBox_R0C0", "ShipBox_R0C1", "ShipBox_R0C2", "ShipBox_R0C3", "ShipBox_R1C0", "ShipBox_R1C1", "ShipBox_R1C2", "ShipBox_R1C3", "ShipBox_R2C0", "ShipBox_R2C1", "ShipBox_R2C2", "ShipBox_R2C3", "StorageBox_R0C0", "StorageBox_R0C1", "StorageBox_R0C2", "StorageBox_R0C3", "StorageBox_R1C0", "StorageBox_R1C1", "StorageBox_R1C2", "StorageBox_R1C3", "FactoryPart_0", "FactoryPart_1", "FactoryPart_2", "FactoryPart_3", "FactoryPart_4", "FactoryPart_5", "FactoryPart_6", "FactoryPart_7", "FactoryPart_8"],
+  "tagged_objects": {
+    "Ground": ["Floor", "AssemblyFloor", "QCFloor", "ShippingFloor"],
+    "Obstacle": ["Wall_Back", "Wall_Front", "Wall_Left", "Wall_Right", "RobotArm_1", "RobotArm_2", "RobotArm_3", "AssemblyUnit", "Station_A1", "Station_A2", "QC_Machine"],
+    "Interactable": ["AcceptBin_1", "AcceptBin_2", "AcceptBin_3", "RejectBin_1", "RejectBin_2", "RejectBin_3", "ShipBox_R0C0", "ShipBox_R0C1", "ShipBox_R0C2", "ShipBox_R0C3", "ShipBox_R1C0", "ShipBox_R1C1", "ShipBox_R1C2", "ShipBox_R1C3", "ShipBox_R2C0", "ShipBox_R2C1", "ShipBox_R2C2", "ShipBox_R2C3", "StorageBox_R0C0", "StorageBox_R0C1", "StorageBox_R0C2", "StorageBox_R0C3", "StorageBox_R1C0", "StorageBox_R1C1", "StorageBox_R1C2", "StorageBox_R1C3", "FactoryPart_0", "FactoryPart_1", "FactoryPart_2", "FactoryPart_3", "FactoryPart_4", "FactoryPart_5", "FactoryPart_6", "FactoryPart_7", "FactoryPart_8"],
+    "MainCamera": ["Main Camera"],
+    "TargetPoint": ["TargetPoint_0", "TargetPoint_1", "TargetPoint_2", "TargetPoint_3", "TargetPoint_4", "TargetPoint_5", "TargetPoint_6", "TargetPoint_7", "TargetPoint_8"]
+  },
+  "spatial_regions": [
+    { "name": "RawMaterialStorage", "center": [2.50, 0.00, 3.00], "size": [5.00, 0.01, 6.00] },
+    { "name": "AssemblyLineA", "center": [8.50, 0.00, 3.00], "size": [7.00, 0.01, 6.00] },
+    { "name": "RobotCell", "center": [14.00, 0.00, 3.00], "size": [4.00, 0.01, 6.00] },
+    { "name": "AssemblyLineB", "center": [18.00, 0.00, 3.00], "size": [4.00, 0.01, 6.00] },
+    { "name": "MainAisle", "center": [10.00, 0.00, 6.50], "size": [20.00, 0.01, 1.00] },
+    { "name": "QualityControl", "center": [7.00, 0.00, 10.00], "size": [14.00, 0.01, 6.00] },
+    { "name": "SortingArea", "center": [17.00, 0.00, 10.00], "size": [6.00, 0.01, 6.00] },
+    { "name": "PackingBench", "center": [5.00, 0.00, 15.50], "size": [10.00, 0.01, 5.00] },
+    { "name": "ShippingDock", "center": [15.00, 0.00, 15.50], "size": [10.00, 0.01, 5.00] }
+  ],
+  "hierarchy_roots": ["Factory", "_Managers", "FactoryPart_0", "FactoryPart_1", "FactoryPart_2", "FactoryPart_3", "FactoryPart_4", "FactoryPart_5", "FactoryPart_6", "FactoryPart_7", "FactoryPart_8", "TargetPoint_0", "TargetPoint_1", "TargetPoint_2", "TargetPoint_3", "TargetPoint_4", "TargetPoint_5", "TargetPoint_6", "TargetPoint_7", "TargetPoint_8", "ZoneMarkers", "XR Origin (XR Rig)", "VRButtons"]
+}

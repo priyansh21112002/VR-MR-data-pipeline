@@ -1,0 +1,423 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b7488f5b6c931744820240bc0f261e2, type: 3}
+  m_Name: FactoryTasks
+  m_EditorClassIdentifier: 
+  primaryObjectPrefix: FactoryPart
+  targetObjectPrefix: TargetPoint
+  maxObjectIndex: 8
+  csvFileName: factory_performance_data
+  tasks:
+  - taskNumber: 1
+    description: 'Assembly Line Startup: Safety check, start conveyor, verify operation'
+    primaryObject: FactoryPart_0
+    targetObject: TargetPoint_0
+    subtasks:
+    - type: navigate
+      description: Walk to the Assembly Control Panel
+      targetMode: 3
+      fixedPosition: {x: 1, y: 0, z: 3.5}
+      sceneObjectName: 
+    - type: verify
+      description: Complete the pre-start safety checklist
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: press_button
+      description: Press CLEAR to confirm the area is safe
+      targetMode: 4
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: BTN_CLEAR
+    - type: press_button
+      description: Press START to activate Conveyor A1
+      targetMode: 4
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: BTN_START
+    - type: verify
+      description: Confirm conveyor belt is running smoothly
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 2
+    description: 'Material Staging: Scan barcode, verify part number, stage at assembly
+      line'
+    primaryObject: FactoryPart_1
+    targetObject: TargetPoint_1
+    subtasks:
+    - type: navigate
+      description: Walk to Raw Material Storage
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: scan
+      description: Scan the part barcode on the wiring harness
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: verify
+      description: Verify part number matches the work order
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Pick up the wiring harness
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: carry
+      description: Carry to Assembly Line A staging area
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Stage the part at the assembly fixture
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: verify
+      description: Confirm staging position is correct
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 3
+    description: 'Robot Arm Operation: Check safety, start cycle, verify quality'
+    primaryObject: FactoryPart_2
+    targetObject: TargetPoint_2
+    subtasks:
+    - type: navigate
+      description: Walk to Robot Cell control station
+      targetMode: 3
+      fixedPosition: {x: 13.5, y: 0.01, z: 4.8}
+      sceneObjectName: 
+    - type: verify
+      description: Check safety interlock light is green
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: press_button
+      description: Press CYCLE START on robot control panel
+      targetMode: 4
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: BTN_CYCLE_START
+    - type: wait
+      description: Observe robot arm completing welding cycle
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: verify
+      description: Verify quality indicator shows PASS
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 4
+    description: 'Quality Inspection: Inspect sub-assembly, decide pass/fail, sort
+      to bin'
+    primaryObject: FactoryPart_3
+    targetObject: TargetPoint_3
+    subtasks:
+    - type: navigate
+      description: Walk to the assembly output conveyor
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Pick up the sub-assembly for inspection
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: verify
+      description: Visually inspect all weld points
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: verify
+      description: Check for surface defects and alignment
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: decide
+      description: Make PASS or FAIL determination
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: carry
+      description: Carry to the appropriate bin
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Sort into the accept or reject bin
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: scan
+      description: Scan bin barcode to log result
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 5
+    description: 'Calibration Check: Verify QC machine calibration before use'
+    primaryObject: FactoryPart_4
+    targetObject: TargetPoint_4
+    subtasks:
+    - type: navigate
+      description: Walk to the QC Machine
+      targetMode: 3
+      fixedPosition: {x: 14, y: 0, z: 11}
+      sceneObjectName: 
+    - type: verify
+      description: Check the calibration due-date sticker
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: operate
+      description: Run the automated self-test routine
+      targetMode: 3
+      fixedPosition: {x: 14, y: 1, z: 11}
+      sceneObjectName: 
+    - type: wait
+      description: Wait for self-test cycle to complete
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: verify
+      description: Verify all readings are within tolerance
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 6
+    description: 'Defect Sorting: Scan QC tag, read status, route to correct bin'
+    primaryObject: FactoryPart_5
+    targetObject: TargetPoint_5
+    subtasks:
+    - type: navigate
+      description: Walk to QC output area
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: scan
+      description: Scan the QC tag on the inspected housing
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: verify
+      description: Read the pass/fail status report
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Pick up the inspected housing
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: decide
+      description: 'Determine routing: accept or reject'
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: carry
+      description: Carry to the designated bin
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Route the part to the correct bin
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: verify
+      description: Verify bin counter incremented on sorting panel
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 7
+    description: 'Packaging: Package approved assembly with proper documentation'
+    primaryObject: FactoryPart_6
+    targetObject: TargetPoint_6
+    subtasks:
+    - type: navigate
+      description: Walk to Packing Bench
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Pick up the approved assembly
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: carry
+      description: Carry to the packing station
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Place assembly in foam-lined carton
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: attach
+      description: Insert desiccant bag and close flaps
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: scan
+      description: Scan assembly serial number for tracking
+      targetMode: 3
+      fixedPosition: {x: 5.38, y: 1, z: 14.88}
+      sceneObjectName: 
+    - type: verify
+      description: Confirm packing slip prints correctly
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: attach
+      description: Tape-seal the carton
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 8
+    description: 'Shipping Prep: Label carton and stage on pallet for dispatch'
+    primaryObject: FactoryPart_7
+    targetObject: TargetPoint_7
+    subtasks:
+    - type: navigate
+      description: Walk to the Packing Bench label station
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: scan
+      description: Scan the carton barcode
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: verify
+      description: Verify shipping address matches work order
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: press_button
+      description: Press PRINT LABEL
+      targetMode: 4
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: BTN_PRINT_LABEL
+    - type: attach
+      description: Attach shipping label to carton
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Pick up the labeled carton
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: carry
+      description: Carry to Shipping Dock staging area
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Place on the correct pallet
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: scan
+      description: Scan pallet barcode to confirm staging
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 9
+    description: 'Lockout/Tagout: Perform LOTO on Robot Arm 3 before maintenance'
+    primaryObject: FactoryPart_8
+    targetObject: TargetPoint_8
+    subtasks:
+    - type: navigate
+      description: Walk to the Robot Cell control panel
+      targetMode: 3
+      fixedPosition: {x: 13.5, y: 0.01, z: 4.8}
+      sceneObjectName: 
+    - type: press_button
+      description: Press EMERGENCY STOP on Robot Arm 3
+      targetMode: 4
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: BTN_ESTOP
+    - type: verify
+      description: Verify robot arm has stopped completely
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: wait
+      description: Wait for full power-down sequence
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: navigate
+      description: Walk to the electrical disconnect panel
+      targetMode: 3
+      fixedPosition: {x: 19, y: 0, z: 9}
+      sceneObjectName: 
+    - type: operate
+      description: Turn disconnect switch to OFF position
+      targetMode: 3
+      fixedPosition: {x: 19, y: 1, z: 9}
+      sceneObjectName: 
+    - type: lockout
+      description: Apply personal lock to disconnect switch
+      targetMode: 3
+      fixedPosition: {x: 19, y: 1, z: 9}
+      sceneObjectName: 
+    - type: attach
+      description: Attach DANGER tag with name and date
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: verify
+      description: Attempt restart to confirm lockout holds
+      targetMode: 0
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  zones:
+  - zoneName: RawMaterialStorage
+    center: {x: 2.5, y: 1.5, z: 3}
+    size: {x: 5, y: 3, z: 6}
+    zoneType: storage
+  - zoneName: AssemblyLineA
+    center: {x: 8.5, y: 1.5, z: 3}
+    size: {x: 7, y: 3, z: 6}
+    zoneType: assembly
+  - zoneName: RobotCell
+    center: {x: 14, y: 1.5, z: 3}
+    size: {x: 4, y: 3, z: 6}
+    zoneType: hazard
+  - zoneName: AssemblyLineB
+    center: {x: 18, y: 1.5, z: 3}
+    size: {x: 4, y: 3, z: 6}
+    zoneType: assembly
+  - zoneName: MainAisle
+    center: {x: 10, y: 1.5, z: 6.5}
+    size: {x: 20, y: 3, z: 1}
+    zoneType: aisle
+  - zoneName: QualityControl
+    center: {x: 7, y: 1.5, z: 10}
+    size: {x: 14, y: 3, z: 6}
+    zoneType: inspection
+  - zoneName: SortingArea
+    center: {x: 17, y: 1.5, z: 10}
+    size: {x: 6, y: 3, z: 6}
+    zoneType: inspection
+  - zoneName: PackingBench
+    center: {x: 5, y: 1.5, z: 15.5}
+    size: {x: 10, y: 3, z: 5}
+    zoneType: packaging
+  - zoneName: ShippingDock
+    center: {x: 15, y: 1.5, z: 15.5}
+    size: {x: 10, y: 3, z: 5}
+    zoneType: shipping

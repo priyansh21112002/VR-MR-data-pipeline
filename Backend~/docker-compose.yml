@@ -1,0 +1,53 @@
+###############################################################################
+# VR/MR Training Data Pipeline — Backend Services
+#
+# Usage:
+#   docker compose up data-receiver          # Always-on: receives session uploads
+#   docker compose run analysis              # On-demand: run analysis on latest session
+#   docker compose run llm                   # On-demand: run LLM analysis on latest session
+#   docker compose up                        # Start all services
+#
+# The data volume is shared across all services so they all read/write
+# from the same Data collection/ folder.
+###############################################################################
+
+services:
+  # ── Data Receiver (always on) ─────────────────────────────────
+  # Receives zipped session folders from Quest 3 / VR headset over WiFi
+  data-receiver:
+    build: ./data-receiver
+    ports:
+      - "8080:8080"
+    volumes:
+      - "${DATA_PATH:-./data}:/data"
+    environment:
+      - DATA_DIR=/data
+    restart: unless-stopped
+
+  # ── Python Analysis (on-demand) ───────────────────────────────
+  # Runs spatial analysis, generates charts, heatmaps, dashboards
+  # Usage: docker compose run analysis python analyze.py
+  #        docker compose run analysis python generate_dashboard.py
+  #        docker compose run analysis python cumulative_analysis.py
+  analysis:
+    build: ./analysis
+    volumes:
+      - "${DATA_PATH:-./data}:/data"
+    environment:
+      - DATA_DIR=/data
+    working_dir: /app
+    profiles: ["analysis", "all"]
+
+  # ── LLM Analysis (on-demand) ──────────────────────────────────
+  # Runs LLM-powered natural language reports via NVIDIA API
+  # Reads API key from pipeline_config.json in the session folder
+  # Usage: docker compose run llm python main.py --session /data/session_1_*/
+  llm:
+    build: ./llm
+    volumes:
+      - "${DATA_PATH:-./data}:/data"
+    environment:
+      - DATA_DIR=/data
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY:-}
+    working_dir: /app
+    profiles: ["llm", "all"]

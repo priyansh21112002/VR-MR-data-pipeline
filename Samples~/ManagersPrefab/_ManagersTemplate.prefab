@@ -1,0 +1,270 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7301350022101798659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4414336183540846589}
+  - component: {fileID: 1326392985181687101}
+  - component: {fileID: 5890872167257021476}
+  - component: {fileID: 3671639284234621439}
+  - component: {fileID: 365150394465983715}
+  - component: {fileID: 5735933279761986440}
+  - component: {fileID: 8404087640936939869}
+  - component: {fileID: 6759846492234216723}
+  - component: {fileID: 4007188978384624738}
+  - component: {fileID: 3995028461806266408}
+  m_Layer: 0
+  m_Name: _ManagersTemplate
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4414336183540846589
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301350022101798659}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1326392985181687101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301350022101798659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d4a95e807900074d964a1881b35f932, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5890872167257021476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301350022101798659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7b8c9d0e1f2345678901234567890ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoCreateLoggers: 1
+  dataLogger: {fileID: 0}
+  vrPerformanceTracker: {fileID: 0}
+  activitySpecificDataLogger: {fileID: 0}
+  spatialAnalyticsLogger: {fileID: 0}
+  performanceAnalyticsEngine: {fileID: 0}
+  temporalDataLogger: {fileID: 0}
+  behavioralDataCollector: {fileID: 0}
+  showDebugMessages: 1
+--- !u!114 &3671639284234621439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301350022101798659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a984eb77e24aee4b8564d6fede31039, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xrOrigin: {fileID: 0}
+  headCamera: {fileID: 0}
+  leftController: {fileID: 0}
+  rightController: {fileID: 0}
+  currentActivity: idle
+  idleThreshold: 2
+  showDebugMessages: 1
+--- !u!114 &365150394465983715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301350022101798659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0e0136b7fd413046bc2fbc2a06818de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoGenerateTasks: 0
+  randomizeTaskOrder: 0
+  primaryObjectPrefix: Object
+  targetObjectPrefix: TargetPoint
+  maxObjectIndex: 8
+  allTasks: []
+  currentTaskIndex: 0
+  currentTask:
+    taskId: 
+    taskNumber: 0
+    primaryObjectId: 
+    targetObjectId: 
+    description: 
+    state: 0
+    taskStartTime: 0
+    taskCompletionTime: 0
+    subtasks: []
+    totalDuration: 0
+    placementAccuracy: 0
+    correctPlacement: 0
+    pathDataId: 
+    idealPathId: 
+  taskLogFileName: task_events_log
+--- !u!114 &5735933279761986440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301350022101798659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f0b0853cf2eff941ba2c3e758c11b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  approachDistance: 1.5
+  placementThreshold: 1.2
+  checkInterval: 0.2
+  taskManager: {fileID: 0}
+  pathCollector: {fileID: 0}
+  idealPathManager: {fileID: 0}
+  pathAnalytics: {fileID: 0}
+  interactionUI: {fileID: 0}
+  showDebugMessages: 1
+--- !u!114 &8404087640936939869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301350022101798659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b16308b567138ce4a9615c43e104b0b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  samplingRate: 0.05
+  minMovementThreshold: 0.01
+  isTracking: 0
+  currentPath:
+    pathId: 
+    taskId: 
+    taskNumber: 0
+    primaryObjectId: 
+    targetObjectId: 
+    pathType: 
+    pathPoints: []
+    startPosition: {x: 0, y: 0, z: 0}
+    endPosition: {x: 0, y: 0, z: 0}
+    targetPosition: {x: 0, y: 0, z: 0}
+    startTime: 0
+    endTime: 0
+    totalDistance2D: 0
+    totalDistance3D: 0
+    totalDuration: 0
+    averageSpeed: 0
+    maxSpeed: 0
+    idealDistance: 0
+    pathEfficiency: 0
+    deviationFromIdeal: 0
+    completed: 0
+  currentNavigationPath:
+    pathId: 
+    taskId: 
+    taskNumber: 0
+    primaryObjectId: 
+    targetObjectId: 
+    pathType: 
+    pathPoints: []
+    startPosition: {x: 0, y: 0, z: 0}
+    endPosition: {x: 0, y: 0, z: 0}
+    targetPosition: {x: 0, y: 0, z: 0}
+    startTime: 0
+    endTime: 0
+    totalDistance2D: 0
+    totalDistance3D: 0
+    totalDuration: 0
+    averageSpeed: 0
+    maxSpeed: 0
+    idealDistance: 0
+    pathEfficiency: 0
+    deviationFromIdeal: 0
+    completed: 0
+  completedPaths: []
+--- !u!114 &6759846492234216723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301350022101798659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d6c738797bf49a4ea19b97c3bb19605, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoGeneratePaths: 1
+  useObstacleAvoidance: 1
+  showIdealPaths: 0
+  idealPathColor: {r: 0, g: 1, b: 1, a: 1}
+  pathLineWidth: 0.1
+--- !u!114 &4007188978384624738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301350022101798659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f38d74a25c1f90c468ae49b99937d456, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deviationWarningThreshold: 1.5
+  efficiencyGoodThreshold: 85
+  efficiencyExcellentThreshold: 95
+  currentSessionStats:
+    sessionId: 
+    totalTasks: 0
+    completedTasks: 0
+    totalDistanceTraveled: 0
+    totalIdealDistance: 0
+    overallEfficiency: 0
+    averageTaskTime: 0
+    averageDeviation: 0
+    taskResults: []
+    gradeA_count: 0
+    gradeB_count: 0
+    gradeC_count: 0
+    gradeD_count: 0
+    gradeF_count: 0
+--- !u!114 &3995028461806266408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301350022101798659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0bb3d92d991fca46af07c48df384c9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  taskAsset: {fileID: 0}

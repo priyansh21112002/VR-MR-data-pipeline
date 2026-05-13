@@ -1,0 +1,44 @@
+{
+  "name": "com.priyansh.vr-mr-data-pipeline",
+  "version": "1.0.0",
+  "displayName": "VR/MR Training Data Pipeline",
+  "description": "Environment-agnostic data collection, task system, and LLM-powered analysis pipeline for VR/MR training research. Captures spatial, temporal, behavioral, and task-specific data at 10Hz across any XR environment.",
+  "unity": "6000.0",
+  "unityRelease": "47f1",
+  "documentationUrl": "https://github.com/priyansh21112002/VR-MR-data-pipeline",
+  "changelogUrl": "https://github.com/priyansh21112002/VR-MR-data-pipeline/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/priyansh21112002/VR-MR-data-pipeline/blob/main/LICENSE",
+  "keywords": [
+    "VR",
+    "MR",
+    "mixed-reality",
+    "training",
+    "data-collection",
+    "analytics",
+    "task-system",
+    "OpenXR",
+    "Meta Quest",
+    "XR Interaction Toolkit"
+  ],
+  "author": {
+    "name": "Priyansh",
+    "url": "https://github.com/priyansh21112002"
+  },
+  "samples": [
+    {
+      "displayName": "Warehouse Task Definition",
+      "description": "Sample TaskDefinitionAsset for warehouse pick-and-place training (8 tasks, 7 zones)",
+      "path": "Samples~/WarehouseTaskDefinition"
+    },
+    {
+      "displayName": "MR Lab Task Definition",
+      "description": "Sample TaskDefinitionAsset for Mixed Reality lab environment (4 tasks)",
+      "path": "Samples~/MRLabTaskDefinition"
+    },
+    {
+      "displayName": "Managers Prefab",
+      "description": "Pre-configured _Managers GameObject with all pipeline components attached",
+      "path": "Samples~/ManagersPrefab"
+    }
+  ]
+}

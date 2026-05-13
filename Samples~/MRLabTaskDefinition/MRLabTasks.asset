@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b7488f5b6c931744820240bc0f261e2, type: 3}
+  m_Name: MRLabTasks
+  m_EditorClassIdentifier: 
+  primaryObjectPrefix: Box
+  targetObjectPrefix: Target
+  maxObjectIndex: 3
+  csvFileName: mr_lab_performance_data
+  tasks:
+  - taskNumber: 1
+    description: Pick Box_0 and place it on Target_0
+    primaryObject: Box_0
+    targetObject: Target_0
+    subtasks:
+    - type: navigate
+      description: Walk to Box_0
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Grab Box_0
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: carry
+      description: Carry Box_0 to target
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Place Box_0 on Target_0
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 2
+    description: Pick Box_1 and place it on Target_1
+    primaryObject: Box_1
+    targetObject: Target_1
+    subtasks:
+    - type: navigate
+      description: Walk to Box_1
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Grab Box_1
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: carry
+      description: Carry Box_1 to target
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Place Box_1 on Target_1
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 3
+    description: Pick Box_2 and place it on Target_2
+    primaryObject: Box_2
+    targetObject: Target_2
+    subtasks:
+    - type: navigate
+      description: Walk to Box_2
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Grab Box_2
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: carry
+      description: Carry Box_2 to target
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Place Box_2 on Target_2
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 4
+    description: Pick Box_3 and place it on Target_3
+    primaryObject: Box_3
+    targetObject: Target_3
+    subtasks:
+    - type: navigate
+      description: Walk to Box_3
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Grab Box_3
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: carry
+      description: Carry Box_3 to target
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Place Box_3 on Target_3
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  zones:
+  - zoneName: PickupArea
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 3, y: 3, z: 3}
+    zoneType: storage
+  - zoneName: PlacementArea
+    center: {x: 2, y: 0, z: 2}
+    size: {x: 3, y: 3, z: 3}
+    zoneType: assembly

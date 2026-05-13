@@ -1,0 +1,212 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b7488f5b6c931744820240bc0f261e2, type: 3}
+  m_Name: WarehousePickPlaceTasks
+  m_EditorClassIdentifier: 
+  primaryObjectPrefix: Box
+  targetObjectPrefix: Target
+  maxObjectIndex: 7
+  csvFileName: warehouse_performance_data
+  tasks:
+  - taskNumber: 1
+    description: Retrieve the Red Box from Storage A aisle and deliver it to the Receiving bay
+    primaryObject: Box_0
+    targetObject: Target_0
+    subtasks:
+    - type: navigate
+      description: Walk into Storage A aisle (between Shelf rows at x=8 and x=14)
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Pick up the Red Box from the floor pallet in Aisle A
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Carry the Red Box south and place it on the target pallet in the Receiving bay
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 2
+    description: Move the Blue Box from Receiving to the Level 1 shelf in Storage B
+    primaryObject: Box_1
+    targetObject: Target_1
+    subtasks:
+    - type: navigate
+      description: Walk to the Blue Box in the Receiving bay (right side)
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Pick up the Blue Box from the floor pallet
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Carry the Blue Box into Storage B and place it on the elevated Level 1 shelf target in Aisle B
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 3
+    description: Transfer the Green Box from the Main Aisle to the Staging area
+    primaryObject: Box_2
+    targetObject: Target_2
+    subtasks:
+    - type: navigate
+      description: Walk to the Green Box sitting in the Main Aisle
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Pick up the Green Box
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Carry the Green Box east and place it on the target in the Staging area
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 4
+    description: Retrieve the Orange Box from deep in Storage B and deliver it to Shipping
+    primaryObject: Box_3
+    targetObject: Target_3
+    subtasks:
+    - type: navigate
+      description: Walk deep into Storage B Aisle B (far end near Shelf_8)
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Pick up the Orange Box from the floor pallet
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Carry the Orange Box across the warehouse to Shipping and place it on the target pallet
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 5
+    description: Move the Purple Box from the Equipment zone to a Level 1 shelf in Storage A
+    primaryObject: Box_4
+    targetObject: Target_4
+    subtasks:
+    - type: navigate
+      description: Walk to the Purple Box in the Equipment zone (back of warehouse)
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Pick up the Purple Box from the floor pallet
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Carry the Purple Box to Storage A and place it on the elevated Level 1 shelf target in Aisle A
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 6
+    description: Transfer the Cyan Box from Staging to the Order Picking zone
+    primaryObject: Box_5
+    targetObject: Target_5
+    subtasks:
+    - type: navigate
+      description: Walk to the Cyan Box in the Staging area (south section)
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Pick up the Cyan Box
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Carry the Cyan Box westward and place it on the target in the Order Picking zone
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 7
+    description: Move the Yellow Box from Shipping to a Level 1 shelf in Storage B
+    primaryObject: Box_6
+    targetObject: Target_6
+    subtasks:
+    - type: navigate
+      description: Walk to the Yellow Box near the Shipping dock (left side)
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Pick up the Yellow Box from the floor pallet
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Carry the Yellow Box into Storage B and place it on the elevated Level 1 shelf target in Aisle B
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  - taskNumber: 8
+    description: Retrieve the Pink Box from the Level 1 shelf in Storage A and deliver it across to Storage B floor
+    primaryObject: Box_7
+    targetObject: Target_7
+    subtasks:
+    - type: navigate
+      description: Walk into Storage A Aisle A and approach the Pink Box on the Level 1 shelf
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: pick
+      description: Reach up and pick the Pink Box from the elevated shelf pallet
+      targetMode: 1
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+    - type: place
+      description: Carry the Pink Box across the Main Aisle to Storage B and place it on the floor-level target in Aisle B
+      targetMode: 2
+      fixedPosition: {x: 0, y: 0, z: 0}
+      sceneObjectName: 
+  zones:
+  - zoneName: StorageA
+    center: {x: 11, y: 1, z: 28.75}
+    size: {x: 9, y: 4, z: 52}
+    zoneType: storage
+  - zoneName: StorageB
+    center: {x: 37.75, y: 1, z: 28.75}
+    size: {x: 9, y: 4, z: 52}
+    zoneType: storage
+  - zoneName: Receiving
+    center: {x: 24.5, y: 1, z: 5.25}
+    size: {x: 35, y: 4, z: 5.5}
+    zoneType: receiving
+  - zoneName: Staging
+    center: {x: 28, y: 1, z: 31}
+    size: {x: 4, y: 4, z: 48}
+    zoneType: staging
+  - zoneName: OrderPicking
+    center: {x: 16, y: 1, z: 31}
+    size: {x: 3, y: 4, z: 46}
+    zoneType: pick
+  - zoneName: MainAisle
+    center: {x: 22, y: 1, z: 29.75}
+    size: {x: 9, y: 4, z: 54.5}
+    zoneType: transit
+  - zoneName: Equipment
+    center: {x: 26.5, y: 1, z: 60}
+    size: {x: 23, y: 4, z: 10}
+    zoneType: equipment
+  - zoneName: Shipping
+    center: {x: 24.5, y: 1, z: 60.5}
+    size: {x: 35, y: 4, z: 11}
+    zoneType: shipping
