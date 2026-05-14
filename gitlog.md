@@ -157,8 +157,11 @@ A key research goal was to extend this pipeline to **Mixed Reality (MR)** using 
 | Python analysis pipeline | ✅ 12 scripts in Backend~/analysis/ |
 | LLM pipeline (sanitized) | ✅ No hardcoded keys, auto-discovery |
 | Documentation | ✅ 7 docs in Documentation~/ |
-| Sample assets | ✅ 3 TaskDefinitionAssets + 1 Prefab |
+| Sample assets | ✅ 3 TaskDefinitionAssets + 1 Prefab (GUIDs fixed) |
 | .meta files | ✅ 43 total (39 Runtime/Editor + 4 root) |
+| Sample GUID references | ✅ All 12 GUIDs remapped to match .meta files |
+| Setup VR Scene menu | ✅ One-click _Managers creation for XRI |
+| Setup MR Scene menu | ✅ One-click _Managers creation for Meta MR |
 | Original project integrity | ✅ No files moved or modified |
 
 ---
@@ -170,12 +173,50 @@ A key research goal was to extend this pipeline to **Mixed Reality (MR)** using 
 | 1 | `a2f9da2` | Initial commit | 1 (LICENSE) |
 | 2 | `c4315ec` | v1.0.0 - VR/MR Training Data Pipeline | 88 files |
 | 3 | `56bdeb6` | Add root-level .meta files (README, CHANGELOG, LICENSE, package.json) | 4 files |
+| 4 | (pending) | Fix sample GUIDs + add Setup VR/MR Scene menu items | 6 files |
+
+### Phase 6: GUID Fix & Editor Menu Enhancement
+
+15. **Problem identified:** The `_ManagersTemplate.prefab` and all 3 sample `.asset` files contained GUIDs from the original HDRP project's `Assembly-CSharp` assembly. When a user imports the package, Unity resolves scripts from the `VRTrainingPipeline` assembly which has **different GUIDs** (from the `.meta` files in `Runtime/`). Result: every component shows "Missing Script" on import.
+
+16. **GUID audit performed:** Read all `.meta` files in `Github/Runtime/` and `Github/Runtime/TaskSystem/` to extract the correct GUIDs. Compared against the old GUIDs stored in the prefab/assets.
+
+17. **Fixed 9 GUID mismatches in `_ManagersTemplate.prefab`:**
+
+    | Script | Old GUID (Assembly-CSharp) | New GUID (VRTrainingPipeline .meta) |
+    |--------|---------------------------|-------------------------------------|
+    | SessionManager | `9d4a95e807900074d964a1881b35f932` | `abd505c5635d4bb4ba2660874fe92a6d` |
+    | LoggingManager | `a7b8c9d0e1f2345678901234567890ab` | `61137165cfe54825953ca23c225dc0e3` |
+    | VRPerformanceTracker | `3a984eb77e24aee4b8564d6fede31039` | `ce5cf0e8fe4643c69804707f9c0df26d` |
+    | TaskDefinitionManager | `e0e0136b7fd413046bc2fbc2a06818de` | `231f1984140b45df90e5fced59c0d520` |
+    | TaskSystemIntegration | `0f0b0853cf2eff941ba2c3e758c11b39` | `720f7b80b03349f48d8ae6eb4bf61824` |
+    | PathDataCollector | `b16308b567138ce4a9615c43e104b0b1` | `90ac0ac7227647f98258ba43ea3467a9` |
+    | IdealPathManager | `0d6c738797bf49a4ea19b97c3bb19605` | `143a6657d16f45d4957a74a4f92d538d` |
+    | PathAnalytics | `f38d74a25c1f90c468ae49b99937d456` | `e0d4607c76004faa8842f840c6f8215b` |
+    | GenericSceneManager | `d0bb3d92d991fca46af07c48df384c9b` | `899ac17908c84050ac502a532978b637` |
+
+18. **Fixed 1 GUID mismatch in each of 3 `.asset` files:**
+
+    | File | Script | Old GUID | New GUID |
+    |------|--------|----------|----------|
+    | `MRLabTasks.asset` | TaskDefinitionAsset | `0b7488f5b6c931744820240bc0f261e2` | `5075f1e9246e448d99f2c17a5f2aad0d` |
+    | `FactoryTasks.asset` | TaskDefinitionAsset | `0b7488f5b6c931744820240bc0f261e2` | `5075f1e9246e448d99f2c17a5f2aad0d` |
+    | `WarehousePickPlaceTasks.asset` | TaskDefinitionAsset | `0b7488f5b6c931744820240bc0f261e2` | `5075f1e9246e448d99f2c17a5f2aad0d` |
+
+19. **Enhanced `CreateManagersPrefab.cs`** — Added two new static methods:
+    - `CreateManagersInScene()` — Creates `_Managers` directly in the active scene with 11 VR pipeline components (SessionManager, LoggingManager, VRPerformanceTracker, PipelineConfig, SessionUploader, GenericSceneManager, TaskDefinitionManager, TaskSystemIntegration, PathDataCollector, IdealPathManager, PathAnalytics). Supports undo, prevents duplicates, selects the created object.
+    - `CreateMRManagersInScene()` — Same core components plus MR-specific: MetaInteractionBridge, MRPerformanceTracker, VRPerformanceTracker (for bridge injection). Also creates `BackendConfig` child with MRBackendConfig. Auto-detects OVRCameraRig. Uses reflection for MR types so the Editor script compiles even if Oculus SDK isn't available.
+
+20. **Enhanced `VRTrainingMenu.cs`** — Added two new top-level menu items:
+    - **VR Training → Setup VR Scene (XRI)** — Calls `CreateManagersInScene()`, then prompts user to create/assign TaskDefinitionAsset (auto-detects existing assets, offers one-click assignment)
+    - **VR Training → Setup MR Scene (Meta)** — Calls `CreateMRManagersInScene()`, then same TaskDefinitionAsset prompt flow
+    - Added `PromptAssignTaskDefinition()` helper: finds existing TaskDefinitionAssets, offers to auto-assign if exactly one found, suggests creation if none found, lists multiple if several exist
 
 ---
 
 ## Known Considerations
 
-1. **Prefab GUID mismatch:** The `_ManagersTemplate.prefab` was serialized in the HDRP project where scripts are in `Assembly-CSharp`. In a new project using the package, scripts are in the `VRTrainingPipeline` assembly. The prefab may show "Missing Script" references. Fix: use **VR Training → Create _Managers Prefab Template** menu to regenerate it in the new project.
+1. ~~**Prefab GUID mismatch:**~~ **FIXED in Phase 6.** All 9 script GUIDs in `_ManagersTemplate.prefab` and 3 TaskDefinitionAsset GUIDs in `.asset` files now match the package's `.meta` files. No more "Missing Script" on import.
 
 2. **Meta scoped registry:** Users must manually add Meta's scoped registry to `manifest.json` before Meta XR SDK can be installed:
    ```json
@@ -196,8 +237,9 @@ A key research goal was to extend this pipeline to **Mixed Reality (MR)** using 
 
 ## Next Steps
 
-1. **Validate in new URP project** — Remove and re-add package after .meta fix, verify zero warnings
+1. **Validate in new URP project** — Install package via git URL, import samples, verify zero "Missing Script" warnings
 2. **Test compilation** — Ensure all 34 scripts compile when XRI + Meta SDK are installed
-3. **Set up MR scene** — OVRCameraRig + Passthrough + MRUK + boxes + _Managers
-4. **Build for Quest 3** — Android, ARM64, IL2CPP
-5. **Test full pipeline** — Grab boxes → data logged → WiFi upload → Docker backend → Python analysis → LLM report
+3. **Test menu items** — VR Training → Setup VR Scene / Setup MR Scene in a fresh project
+4. **Set up MR scene** — OVRCameraRig + Passthrough + MRUK + boxes + _Managers (now one-click via menu)
+5. **Build for Quest 3** — Android, ARM64, IL2CPP
+6. **Test full pipeline** — Grab boxes → data logged → WiFi upload → Docker backend → Python analysis → LLM report

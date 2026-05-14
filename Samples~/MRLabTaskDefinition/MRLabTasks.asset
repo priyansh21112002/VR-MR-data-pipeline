@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b7488f5b6c931744820240bc0f261e2, type: 3}
+  m_Script: {fileID: 11500000, guid: 5075f1e9246e448d99f2c17a5f2aad0d, type: 3}
   m_Name: MRLabTasks
   m_EditorClassIdentifier: 
   primaryObjectPrefix: Box
