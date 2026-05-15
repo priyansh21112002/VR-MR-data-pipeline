@@ -183,8 +183,12 @@ public static class CreateManagersPrefab
 
         Selection.activeGameObject = go;
 
-        // Check for OVRCameraRig
-        bool hasOVR = Object.FindFirstObjectByType<OVRCameraRig>() != null;
+        // Check for OVRCameraRig via reflection (avoids hard dependency on Oculus.VR in Editor assembly)
+        bool hasOVR = false;
+        var ovrCameraRigType = FindTypeByName("OVRCameraRig");
+        if (ovrCameraRigType != null)
+            hasOVR = Object.FindFirstObjectByType(ovrCameraRigType) != null;
+
         string ovrStatus = hasOVR
             ? "✓ OVRCameraRig detected — MRPerformanceTracker will auto-connect."
             : "⚠ No OVRCameraRig found. Add Meta Building Blocks (Camera Rig, Passthrough) first.";
@@ -229,14 +233,7 @@ public static class CreateManagersPrefab
     /// </summary>
     private static bool AddComponentByName(GameObject go, string className)
     {
-        // Search all assemblies for the type
-        System.Type type = null;
-        foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
-        {
-            type = assembly.GetType(className);
-            if (type != null) break;
-        }
-
+        var type = FindTypeByName(className);
         if (type == null)
         {
             Debug.LogWarning($"[VR Training] Could not find type '{className}'. " +
@@ -246,5 +243,19 @@ public static class CreateManagersPrefab
 
         Undo.AddComponent(go, type);
         return true;
+    }
+
+    /// <summary>
+    /// Finds a type by class name across all loaded assemblies.
+    /// Returns null if the type is not found.
+    /// </summary>
+    private static System.Type FindTypeByName(string className)
+    {
+        foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
+        {
+            var type = assembly.GetType(className);
+            if (type != null) return type;
+        }
+        return null;
     }
 }
