@@ -162,6 +162,7 @@ A key research goal was to extend this pipeline to **Mixed Reality (MR)** using 
 | Sample GUID references | ✅ All 12 GUIDs remapped to match .meta files |
 | Setup VR Scene menu | ✅ One-click _Managers creation for XRI |
 | Setup MR Scene menu | ✅ One-click _Managers creation for Meta MR |
+| Export Backend Setup menu | ✅ One-click backend extraction to any folder |
 | Original project integrity | ✅ No files moved or modified |
 
 ---
@@ -174,6 +175,7 @@ A key research goal was to extend this pipeline to **Mixed Reality (MR)** using 
 | 2 | `c4315ec` | v1.0.0 - VR/MR Training Data Pipeline | 88 files |
 | 3 | `56bdeb6` | Add root-level .meta files (README, CHANGELOG, LICENSE, package.json) | 4 files |
 | 4 | (pending) | Fix sample GUIDs + add Setup VR/MR Scene menu items | 6 files |
+| 5 | (pending) | Add Export Backend Setup menu item for one-click backend extraction | 2 files |
 
 ### Phase 6: GUID Fix & Editor Menu Enhancement
 
@@ -235,11 +237,35 @@ A key research goal was to extend this pipeline to **Mixed Reality (MR)** using 
 
 ---
 
+### Phase 7: Backend Export Menu Item
+
+21. **Problem identified:** When a user installs the package via git URL, the `Backend~/` folder ends up in `Library/PackageCache/com.priyansh.vr-mr-data-pipeline@<hash>/Backend~/` — a read-only, non-obvious path. Users on a new system had no easy way to access the Docker backend files without cloning the entire repo separately.
+
+22. **Solution:** Added **VR Training → Export Backend Setup...** menu item to `VRTrainingMenu.cs`:
+    - Uses `PackageInfo.FindForAssetPath()` + 3 fallback methods to locate the package regardless of install method (git URL, local, embedded)
+    - Opens a folder picker dialog for the user to choose export destination
+    - Recursively copies all `Backend~/` contents (docker-compose, Dockerfiles, Python scripts)
+    - Auto-generates helper files at the destination:
+      - `.env` — pre-configured `DATA_PATH` pointing to a `data/` subfolder
+      - `START_BACKEND.bat` — Windows double-click launcher
+      - `start_backend.sh` — Mac/Linux launcher
+      - `README.md` — Quick-start instructions (prerequisites, verify, run analysis)
+      - `data/` folder — where session uploads will land
+    - Shows success dialog with next steps + option to open the folder in Explorer/Finder
+    - Skips `.meta`, `.pyc`, `__pycache__`, `venv` files during copy
+
+23. **README.md updated:**
+    - Added "One-Click Export (Recommended)" section to Backend Setup
+    - Added menu item to Menu Reference table
+    - Kept "Manual Setup (Alternative)" for users who prefer cloning
+
+---
+
 ## Next Steps
 
 1. **Validate in new URP project** — Install package via git URL, import samples, verify zero "Missing Script" warnings
 2. **Test compilation** — Ensure all 34 scripts compile when XRI + Meta SDK are installed
-3. **Test menu items** — VR Training → Setup VR Scene / Setup MR Scene in a fresh project
+3. **Test menu items** — VR Training → Setup VR Scene / Setup MR Scene / Export Backend Setup in a fresh project
 4. **Set up MR scene** — OVRCameraRig + Passthrough + MRUK + boxes + _Managers (now one-click via menu)
 5. **Build for Quest 3** — Android, ARM64, IL2CPP
 6. **Test full pipeline** — Grab boxes → data logged → WiFi upload → Docker backend → Python analysis → LLM report

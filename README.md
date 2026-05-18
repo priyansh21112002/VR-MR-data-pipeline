@@ -144,6 +144,83 @@ Add to your `Packages/manifest.json`:
 
 ---
 
+## End-to-End: New System Setup
+
+Complete walkthrough for a **new PC + new Unity project + Meta Quest 3 MR passthrough** scenario (e.g., picking virtual boxes from floor and placing them on tables in your real lab).
+
+### Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+- Unity 6 (6000.0+) with Android build support
+- Meta Quest 3 on the same WiFi network as your PC
+
+### Step 1: Install the Pipeline
+
+In your Unity project:
+1. **Window → Package Manager → + → Add package from git URL**
+2. Enter: `https://github.com/priyansh21112002/VR-MR-data-pipeline.git`
+3. Install Meta XR SDK (`com.meta.xr.sdk.all`) if not already installed
+
+### Step 2: Set Up Your MR Scene
+
+1. Add Meta Building Blocks: Camera Rig, Passthrough, Hand Tracking, Interaction
+2. Add your grabbable boxes (`Box_0`, `Box_1`, ...) with `Grabbable` component
+3. Add target positions (`Target_0`, `Target_1`, ...) on/near tables
+4. **Menu → VR Training → Setup MR Scene (Meta)** — creates `_Managers` with full pipeline
+
+### Step 3: Configure Tasks
+
+1. **Menu → VR Training → Create New Task Definition**
+2. Set `primaryObjectPrefix` = `"Box"`, `targetObjectPrefix` = `"Target"`, `maxObjectIndex` = `3`
+3. Click **Auto-populate Tasks from Scene Objects**
+4. Assign the asset to `_Managers` via **Menu → VR Training → Assign Selected Asset to Scene**
+
+### Step 4: Export & Start Backend
+
+1. **Menu → VR Training → Export Backend Setup...**
+2. Choose a folder (e.g., `C:\vr-training-backend`)
+3. Open the exported folder and **double-click `START_BACKEND.bat`**
+4. Verify: open `http://localhost:8080/api/health` in browser → `{"status":"ok"}`
+
+### Step 5: Configure Connection
+
+1. Find your PC's IP: run `ipconfig` → look for WiFi IPv4 address (e.g., `192.168.1.42`)
+2. In Unity: on `_Managers` → `SessionUploader` → set `backendUrl` = `http://192.168.1.42:8080`
+3. On `BackendConfig` → `MRBackendConfig` → set same URL (this is the runtime-editable copy)
+
+### Step 6: Build & Deploy
+
+1. **File → Build Settings → Android → Switch Platform**
+2. Set Texture Compression: ASTC, Architecture: ARM64, Scripting Backend: IL2CPP
+3. Connect Quest 3 via USB (or WiFi ADB)
+4. **Build And Run**
+
+### Step 7: Run Training Session
+
+1. Launch the app on Quest 3
+2. Verify backend connection via the runtime config panel (green = connected)
+3. Pick boxes → place on tables → pipeline records everything automatically
+4. Quit the app → data auto-uploads to your PC
+
+### Step 8: Analyze Results
+
+```bash
+cd C:\vr-training-backend
+
+# Check received sessions
+curl http://localhost:8080/api/sessions
+
+# Generate visualizations (17 charts)
+docker compose run analysis python analyze.py
+
+# Generate LLM report (optional, needs NVIDIA API key in .env)
+docker compose run llm python main.py --session /data/session_1_*/
+```
+
+Results appear in the `data/session_*/` folder: PNG charts, CSVs, and markdown reports.
+
+---
+
 ## Menu Reference
 
 All menu items are under the **VR Training** top-level menu:
@@ -157,6 +234,7 @@ All menu items are under the **VR Training** top-level menu:
 | **VR Training → Create New Task Definition** | Creates a new TaskDefinitionAsset in `Assets/VR Training/`. |
 | **VR Training → Assign Selected Asset to Scene** | Assigns the currently selected TaskDefinitionAsset to the scene's GenericSceneManager. |
 | **VR Training → Create _Managers Prefab Template** | Saves the existing `_Managers` in the scene as a reusable prefab (clears scene-specific references). |
+| **VR Training → Export Backend Setup...** | Exports the Docker backend (data-receiver, analysis, LLM) to any folder on your PC. Creates start scripts, .env config, and a data folder. No need to clone the repo separately. |
 | **VR Analytics → Export Scene for Configuration** | Opens the Scene Exporter window — auto-detects floor, walls, equipment, zones, and interactables, then exports `scene_metadata.json` for the Python analysis overlay. |
 
 ---
@@ -305,11 +383,38 @@ Import via Package Manager → **VR/MR Training Data Pipeline** → **Samples**:
 
 ## Backend Setup
 
-The `Backend~/` folder contains a Docker Compose stack with three services:
+### One-Click Export (Recommended)
+
+**Menu bar → VR Training → Export Backend Setup...**
+
+This exports the Docker backend to any folder on your PC:
+1. Opens a folder picker — choose where to save (e.g., `C:\vr-training-backend`)
+2. Copies all Docker services (data-receiver, analysis, LLM)
+3. Creates a `START_BACKEND.bat` (Windows) / `start_backend.sh` (Mac/Linux)
+4. Creates a `.env` file with the data storage path pre-configured
+5. Creates a `data/` folder where sessions will be stored
+
+After exporting:
+```bash
+# Windows: double-click START_BACKEND.bat
+# Or manually:
+cd C:\vr-training-backend
+docker compose up data-receiver -d
+```
+
+### Manual Setup (Alternative)
+
+If you prefer, clone the repo separately just for the backend:
 
 ```bash
-cd Backend~
+git clone https://github.com/priyansh21112002/VR-MR-data-pipeline.git vr-pipeline
+cd vr-pipeline/Backend~
+docker compose up data-receiver -d
+```
 
+### Running Analysis
+
+```bash
 # Start data receiver (always on, receives uploads from Quest over WiFi)
 docker compose up data-receiver -d
 
