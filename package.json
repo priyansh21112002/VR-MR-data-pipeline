@@ -1,6 +1,6 @@
 {
   "name": "com.priyansh.vr-mr-data-pipeline",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "displayName": "VR/MR Training Data Pipeline",
   "description": "Environment-agnostic data collection, task system, and LLM-powered analysis pipeline for VR/MR training research. Captures spatial, temporal, behavioral, and task-specific data at 10Hz across any XR environment.",
   "unity": "6000.0",

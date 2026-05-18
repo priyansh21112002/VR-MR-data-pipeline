@@ -2,9 +2,13 @@ using UnityEngine;
 
 /// <summary>
 /// Runtime UI panel for configuring the backend IP address on Quest 3.
-/// Shows a simple text field where you can edit the IP before starting a session.
+/// Uses OnGUI for quick runtime configuration (visible in Editor and flat-screen mode).
 /// 
-/// Press the toggle button (or trigger via hand gesture) to show/hide the config panel.
+/// On Quest/VR, this panel is only useful via the Scene Debugger or if rendered to
+/// a world-space camera. For headset use, set the backend URL before build via the
+/// Inspector field, or save it once in flat-screen mode (persists via PlayerPrefs).
+/// 
+/// Press the toggle button to show/hide the config panel.
 /// The IP is saved to PlayerPrefs so it persists between launches.
 /// </summary>
 public class MRBackendConfig : MonoBehaviour
@@ -18,10 +22,10 @@ public class MRBackendConfig : MonoBehaviour
     public bool showOnStart = true;
 
     [Tooltip("Panel width in pixels")]
-    public float panelWidth = 400f;
+    public float panelWidth = 450f;
 
     [Tooltip("Panel height in pixels")]
-    public float panelHeight = 200f;
+    public float panelHeight = 280f;
 
     private bool _showPanel = true;
     private string _editableUrl = "";
@@ -32,7 +36,6 @@ public class MRBackendConfig : MonoBehaviour
     private GUIStyle _buttonStyle;
     private GUIStyle _statusStyle;
     private bool _stylesInitialized = false;
-    private bool _isConnected = false;
 
     private const string PREFS_KEY = "VRTraining_BackendUrl";
 
@@ -43,11 +46,8 @@ public class MRBackendConfig : MonoBehaviour
         backendUrl = _editableUrl;
         _showPanel = showOnStart;
 
-        // Apply saved URL to SessionUploader
+        // Apply saved URL to all backend components
         ApplyUrl();
-
-        // Check connectivity
-        CheckConnection();
     }
 
     void InitStyles()
@@ -74,8 +74,9 @@ public class MRBackendConfig : MonoBehaviour
         _buttonStyle.fixedHeight = 35;
 
         _statusStyle = new GUIStyle(GUI.skin.label);
-        _statusStyle.fontSize = 14;
+        _statusStyle.fontSize = 13;
         _statusStyle.alignment = TextAnchor.MiddleCenter;
+        _statusStyle.wordWrap = true;
 
         _stylesInitialized = true;
     }
@@ -85,7 +86,7 @@ public class MRBackendConfig : MonoBehaviour
         InitStyles();
 
         // Toggle button (always visible, top-right corner)
-        if (GUI.Button(new Rect(Screen.width - 110, 10, 100, 30), _showPanel ? "Hide Config" : "⚙ Config"))
+        if (GUI.Button(new Rect(Screen.width - 110, 10, 100, 30), _showPanel ? "Hide Config" : "Config"))
         {
             _showPanel = !_showPanel;
         }
@@ -101,15 +102,15 @@ public class MRBackendConfig : MonoBehaviour
         GUILayout.BeginArea(new Rect(x + 15, y + 15, panelWidth - 30, panelHeight - 30));
 
         // Title
-        GUILayout.Label("🔧 Backend Configuration", _labelStyle);
-        GUILayout.Space(10);
+        GUILayout.Label("Backend Configuration", _labelStyle);
+        GUILayout.Space(8);
 
         // URL field
         GUILayout.Label("Backend URL:", GUI.skin.label);
         _editableUrl = GUILayout.TextField(_editableUrl, _fieldStyle);
-        GUILayout.Space(8);
+        GUILayout.Space(6);
 
-        // Buttons row
+        // Buttons row 1
         GUILayout.BeginHorizontal();
 
         if (GUILayout.Button("Apply & Save", _buttonStyle))
@@ -118,36 +119,73 @@ public class MRBackendConfig : MonoBehaviour
             PlayerPrefs.SetString(PREFS_KEY, backendUrl);
             PlayerPrefs.Save();
             ApplyUrl();
-            CheckConnection();
-            _statusMessage = "✅ URL saved!";
+            _statusMessage = "URL saved and applied!";
         }
 
         if (GUILayout.Button("Test Connection", _buttonStyle))
         {
             ApplyUrl();
-            CheckConnection();
+            TestConnection();
         }
 
-        if (GUILayout.Button("Upload Now", _buttonStyle))
+        GUILayout.EndHorizontal();
+        GUILayout.Space(4);
+
+        // Buttons row 2
+        GUILayout.BeginHorizontal();
+
+        if (GUILayout.Button("Force Sync Now", _buttonStyle))
+        {
+            if (RealtimeDataStreamer.Instance != null)
+            {
+                RealtimeDataStreamer.Instance.ForceSyncNow();
+                _statusMessage = "Sync triggered...";
+            }
+            else
+            {
+                _statusMessage = "RealtimeDataStreamer not found";
+            }
+        }
+
+        if (GUILayout.Button("Restart Stream", _buttonStyle))
+        {
+            if (RealtimeDataStreamer.Instance != null)
+            {
+                ApplyUrl();
+                RealtimeDataStreamer.Instance.RestartStreaming();
+                _statusMessage = "Streaming restarted...";
+            }
+            else
+            {
+                _statusMessage = "RealtimeDataStreamer not found";
+            }
+        }
+
+        if (GUILayout.Button("Zip Upload", _buttonStyle))
         {
             if (SessionUploader.Instance != null)
             {
                 SessionUploader.Instance.UploadCurrentSession();
-                _statusMessage = "📤 Upload started...";
+                _statusMessage = "Zip upload started...";
             }
             else
             {
-                _statusMessage = "❌ SessionUploader not found";
+                _statusMessage = "SessionUploader not found";
             }
         }
 
         GUILayout.EndHorizontal();
-        GUILayout.Space(5);
+        GUILayout.Space(8);
 
-        // Status
-        _statusStyle.normal.textColor = _isConnected ? Color.green : Color.yellow;
-        string connectionStatus = _isConnected ? "🟢 Connected" : "🟡 Not verified";
-        GUILayout.Label($"{connectionStatus}  {_statusMessage}", _statusStyle);
+        // Status display
+        string streamStatus = GetStreamingStatus();
+        _statusStyle.normal.textColor = GetStatusColor();
+        GUILayout.Label(streamStatus, _statusStyle);
+
+        if (!string.IsNullOrEmpty(_statusMessage))
+        {
+            GUILayout.Label(_statusMessage, _statusStyle);
+        }
 
         GUILayout.EndArea();
     }
@@ -160,29 +198,67 @@ public class MRBackendConfig : MonoBehaviour
         if (SessionUploader.Instance != null)
         {
             SessionUploader.Instance.backendUrl = backendUrl;
-            Debug.Log($"[MRBackendConfig] Applied backend URL: {backendUrl}");
         }
+
+        // Push to RealtimeDataStreamer
+        if (RealtimeDataStreamer.Instance != null)
+        {
+            RealtimeDataStreamer.Instance.backendUrl = backendUrl;
+        }
+
+        Debug.Log($"[MRBackendConfig] Applied backend URL: {backendUrl}");
     }
 
-    void CheckConnection()
+    void TestConnection()
     {
         if (SessionUploader.Instance != null)
         {
             SessionUploader.Instance.backendUrl = backendUrl;
             StartCoroutine(SessionUploader.Instance.CheckBackendHealth());
-            // We'll check status via the uploader's status
-            Invoke(nameof(UpdateConnectionStatus), 3f);
+            Invoke(nameof(UpdateStatus), 3f);
         }
     }
 
-    void UpdateConnectionStatus()
+    void UpdateStatus()
     {
+        if (RealtimeDataStreamer.Instance != null)
+        {
+            _statusMessage = RealtimeDataStreamer.Instance.Status;
+        }
+        else if (SessionUploader.Instance != null)
+        {
+            _statusMessage = SessionUploader.Instance.LastUploadStatus;
+        }
+    }
+
+    string GetStreamingStatus()
+    {
+        if (RealtimeDataStreamer.Instance != null)
+        {
+            var streamer = RealtimeDataStreamer.Instance;
+            string reachable = streamer.IsBackendReachable ? "Connected" : "Disconnected";
+            string streaming = streamer.IsStreaming ? "STREAMING" : "Stopped";
+            return $"[{reachable}] {streaming} | {streamer.Status}";
+        }
+
         if (SessionUploader.Instance != null)
         {
-            string status = SessionUploader.Instance.LastUploadStatus;
-            _isConnected = status.Contains("connected") || status.Contains("Connected");
-            _statusMessage = status;
+            return $"Fallback mode | {SessionUploader.Instance.LastUploadStatus}";
         }
+
+        return "No upload components found";
+    }
+
+    Color GetStatusColor()
+    {
+        if (RealtimeDataStreamer.Instance != null)
+        {
+            if (RealtimeDataStreamer.Instance.IsBackendReachable && RealtimeDataStreamer.Instance.IsStreaming)
+                return Color.green;
+            if (RealtimeDataStreamer.Instance.IsStreaming)
+                return Color.yellow;
+        }
+        return Color.white;
     }
 
     // Utility: create a solid color texture for GUI backgrounds

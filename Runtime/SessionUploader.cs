@@ -6,18 +6,15 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 /// <summary>
-/// Uploads session data to the PC backend over WiFi at session end.
-/// Attach to the _Managers GameObject alongside SessionManager.
+/// FALLBACK uploader — zips and uploads entire session at end.
 /// 
-/// Flow:
-/// 1. All loggers write CSVs to local storage (Quest or PC) as normal
-/// 2. On session end (OnApplicationQuit), this script:
-///    a. Zips the entire session folder
-///    b. POSTs it to the backend server
-///    c. Backend extracts it into Data collection/ on the PC
+/// The primary data transfer mechanism is RealtimeDataStreamer (streams during session).
+/// This component serves as a safety net:
+///   - If streaming was active and successful, this does nothing.
+///   - If streaming failed or backend was unreachable, this attempts a full zip upload.
+///   - Also uploads any previous un-uploaded sessions from local storage.
 /// 
-/// Fallback: If upload fails, data remains on Quest local storage.
-/// Use 'adb pull' as backup.
+/// Additionally provides manual upload capability via UploadCurrentSession().
 /// </summary>
 public class SessionUploader : MonoBehaviour
 {
@@ -25,7 +22,7 @@ public class SessionUploader : MonoBehaviour
     [Tooltip("URL of the PC backend server (e.g., http://192.168.1.100:8080)")]
     public string backendUrl = "http://10.131.220.90:8080";
 
-    [Tooltip("Enable automatic upload when session ends")]
+    [Tooltip("Enable automatic upload when session ends (fallback if streaming incomplete)")]
     public bool autoUploadOnEnd = true;
 
     [Tooltip("Number of retry attempts if upload fails")]
@@ -36,6 +33,9 @@ public class SessionUploader : MonoBehaviour
 
     [Tooltip("Request timeout in seconds")]
     public int timeoutSeconds = 120;
+
+    [Tooltip("Skip zip upload if real-time streaming already sent this much data")]
+    public int streamingByteThreshold = 1024; // If streamer sent >1KB, consider it successful
 
     [Header("Status")]
     [SerializeField] private bool _isUploading = false;
@@ -53,6 +53,9 @@ public class SessionUploader : MonoBehaviour
     private static SessionUploader _instance;
     public static SessionUploader Instance => _instance;
 
+    // Track if we should skip upload because streaming handled it
+    private bool _streamingWasSuccessful = false;
+
     void Awake()
     {
         if (_instance != null && _instance != this)
@@ -67,16 +70,103 @@ public class SessionUploader : MonoBehaviour
     {
         // Verify backend connectivity on start
         StartCoroutine(CheckBackendHealth());
+
+        // Try to upload any previous sessions that weren't uploaded
+        StartCoroutine(UploadPendingSessions());
+    }
+
+    /// <summary>
+    /// Called by RealtimeDataStreamer or task system to signal session is ending.
+    /// Triggers upload only if streaming didn't cover the data.
+    /// </summary>
+    public void OnSessionEnding()
+    {
+        if (!autoUploadOnEnd) return;
+
+        // Check if real-time streamer already sent the data
+        if (RealtimeDataStreamer.Instance != null && RealtimeDataStreamer.Instance.TotalBytesSent > streamingByteThreshold)
+        {
+            _streamingWasSuccessful = true;
+            _lastUploadStatus = $"Streaming handled upload ({RealtimeDataStreamer.Instance.TotalBytesSent} bytes sent in real-time)";
+            Debug.Log($"[SessionUploader] ✅ Skipping zip upload — streamer already sent {RealtimeDataStreamer.Instance.TotalBytesSent} bytes");
+
+            // Signal streamer to do final sync
+            RealtimeDataStreamer.Instance.EndStream();
+            return;
+        }
+
+        // Streaming didn't work — do full zip upload
+        Debug.Log("[SessionUploader] Streaming insufficient — attempting full zip upload...");
+        UploadCurrentSession();
     }
 
     void OnApplicationQuit()
     {
-        if (autoUploadOnEnd && !_isUploading)
+        // Note: This has limited time before Unity kills the process.
+        // Real-time streaming has already sent most data during the session.
+        // This is just a best-effort final attempt.
+        if (autoUploadOnEnd && !_isUploading && !_streamingWasSuccessful)
         {
-            // OnApplicationQuit has limited time — start upload but it may not complete
-            // For reliability, also trigger upload from a UI button or session end event
-            Debug.Log("[SessionUploader] Application quitting — attempting final upload...");
-            UploadCurrentSession();
+            Debug.Log("[SessionUploader] Application quitting — most data already streamed in real-time.");
+            // Mark the session as needing upload on next launch if streaming didn't complete
+            MarkSessionPending();
+        }
+    }
+
+    /// <summary>
+    /// Mark the current session as pending upload (for next app launch).
+    /// </summary>
+    private void MarkSessionPending()
+    {
+        string sessionFolder = SessionManager.GetSessionFolder();
+        if (!string.IsNullOrEmpty(sessionFolder) && Directory.Exists(sessionFolder))
+        {
+            try
+            {
+                string markerPath = Path.Combine(sessionFolder, ".pending_upload");
+                File.WriteAllText(markerPath, DateTime.UtcNow.ToString("o"));
+                Debug.Log($"[SessionUploader] Marked session as pending upload: {sessionFolder}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[SessionUploader] Failed to mark pending: {e.Message}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// On startup, check for any previous sessions that weren't fully uploaded.
+    /// </summary>
+    private IEnumerator UploadPendingSessions()
+    {
+        // Wait a bit for system to settle
+        yield return new WaitForSeconds(5f);
+
+        string baseDataPath = SessionManager.GetBaseDataPath();
+        if (string.IsNullOrEmpty(baseDataPath) || !Directory.Exists(baseDataPath))
+            yield break;
+
+        string[] sessionDirs = Directory.GetDirectories(baseDataPath, "session_*");
+        foreach (string dir in sessionDirs)
+        {
+            string markerPath = Path.Combine(dir, ".pending_upload");
+            if (File.Exists(markerPath))
+            {
+                Debug.Log($"[SessionUploader] Found pending session: {dir}");
+
+                // Wait for any current upload to finish
+                while (_isUploading)
+                    yield return new WaitForSeconds(1f);
+
+                yield return UploadSessionCoroutine(dir);
+
+                // If successful, remove the marker
+                if (_lastUploadStatus.Contains("successful"))
+                {
+                    try { File.Delete(markerPath); }
+                    catch { }
+                }
+            }
         }
     }
 
@@ -106,7 +196,7 @@ public class SessionUploader : MonoBehaviour
 
     /// <summary>
     /// Upload the current session folder to the backend.
-    /// Call this from UI, or it runs automatically on quit if autoUploadOnEnd is true.
+    /// Call this from UI, or it runs automatically as fallback.
     /// </summary>
     public void UploadCurrentSession()
     {
@@ -149,12 +239,11 @@ public class SessionUploader : MonoBehaviour
 
         Debug.Log($"[SessionUploader] 📦 Zipping session: {sessionName}");
 
-        // Zip the session folder in a background-friendly way
+        // Zip the session folder
         byte[] zipData = null;
         bool zipSuccess = false;
         string zipError = null;
 
-        // Run zip on main thread (IO is fast enough for session data ~1-5MB)
         try
         {
             zipData = ZipSessionFolder(sessionFolderPath, sessionName);
@@ -184,7 +273,6 @@ public class SessionUploader : MonoBehaviour
             _lastUploadStatus = $"Uploading (attempt {attempt}/{maxRetries})...";
             Debug.Log($"[SessionUploader] 📤 Upload attempt {attempt}/{maxRetries} to {backendUrl}");
 
-            // Create multipart form with zip file
             WWWForm form = new WWWForm();
             form.AddBinaryData("file", zipData, $"{sessionName}.zip", "application/zip");
 
@@ -237,11 +325,10 @@ public class SessionUploader : MonoBehaviour
 
                 foreach (string filePath in allFiles)
                 {
-                    // Skip .meta files and temporary files
-                    if (filePath.EndsWith(".meta") || filePath.EndsWith(".tmp"))
+                    // Skip .meta files, temporary files, and pending markers
+                    if (filePath.EndsWith(".meta") || filePath.EndsWith(".tmp") || filePath.EndsWith(".pending_upload"))
                         continue;
 
-                    // Create relative path with session name as root
                     string relativePath = filePath.Substring(folderPath.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     string entryName = $"{sessionName}/{relativePath}".Replace('\\', '/');
 
