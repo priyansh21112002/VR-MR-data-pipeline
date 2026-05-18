@@ -146,13 +146,13 @@ Add to your `Packages/manifest.json`:
 
 ## End-to-End: New System Setup
 
-Complete walkthrough for a **new PC + new Unity project + Meta Quest 3 MR passthrough** scenario (e.g., picking virtual boxes from floor and placing them on tables in your real lab).
+Complete walkthrough for a **new machine + new Unity project + Meta Quest 3 MR passthrough** scenario (e.g., picking virtual boxes from floor and placing them on tables in your real lab).
 
 ### Prerequisites
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
 - Unity 6 (6000.0+) with Android build support
-- Meta Quest 3 on the same WiFi network as your PC
+- Meta Quest 3 on the same WiFi network as your computer
 
 ### Step 1: Install the Pipeline
 
@@ -178,15 +178,36 @@ In your Unity project:
 ### Step 4: Export & Start Backend
 
 1. **Menu → VR Training → Export Backend Setup...**
-2. Choose a folder (e.g., `C:\vr-training-backend`)
-3. Open the exported folder and **double-click `START_BACKEND.bat`**
+2. Choose a folder (e.g., `~/vr-training-backend` on Mac or `C:\vr-training-backend` on Windows)
+3. Start the backend:
+
+**macOS / Linux:**
+```bash
+cd ~/vr-training-backend
+chmod +x start_backend.sh
+./start_backend.sh
+```
+
+**Windows:**
+```
+Double-click START_BACKEND.bat
+```
+
 4. Verify: open `http://localhost:8080/api/health` in browser → `{"status":"ok"}`
 
 ### Step 5: Configure Connection
 
-1. Find your PC's IP: run `ipconfig` → look for WiFi IPv4 address (e.g., `192.168.1.42`)
-2. In Unity: on `_Managers` → `SessionUploader` → set `backendUrl` = `http://192.168.1.42:8080`
-3. On `BackendConfig` → `MRBackendConfig` → set same URL (this is the runtime-editable copy)
+Find your computer's local IP address:
+
+| OS | Command | Look for |
+|----|---------|----------|
+| **macOS** | `ifconfig en0` | `inet 192.168.x.x` |
+| **Windows** | `ipconfig` | `IPv4 Address: 192.168.x.x` |
+| **Linux** | `ip addr show wlan0` | `inet 192.168.x.x` |
+
+Then in Unity:
+1. On `_Managers` → `SessionUploader` → set `backendUrl` = `http://192.168.x.x:8080`
+2. On `BackendConfig` → `MRBackendConfig` → set same URL (this is the runtime-editable copy)
 
 ### Step 6: Build & Deploy
 
@@ -200,12 +221,12 @@ In your Unity project:
 1. Launch the app on Quest 3
 2. Verify backend connection via the runtime config panel (green = connected)
 3. Pick boxes → place on tables → pipeline records everything automatically
-4. Quit the app → data auto-uploads to your PC
+4. Quit the app → data auto-uploads to your computer
 
 ### Step 8: Analyze Results
 
 ```bash
-cd C:\vr-training-backend
+cd ~/vr-training-backend   # or C:\vr-training-backend on Windows
 
 # Check received sessions
 curl http://localhost:8080/api/sessions
@@ -395,9 +416,20 @@ This exports the Docker backend to any folder on your PC:
 5. Creates a `data/` folder where sessions will be stored
 
 After exporting:
+
+**macOS / Linux:**
 ```bash
-# Windows: double-click START_BACKEND.bat
-# Or manually:
+cd ~/vr-training-backend
+chmod +x start_backend.sh
+./start_backend.sh
+# Or run in background:
+docker compose up data-receiver -d
+```
+
+**Windows:**
+```
+Double-click START_BACKEND.bat
+:: Or from command line:
 cd C:\vr-training-backend
 docker compose up data-receiver -d
 ```
@@ -411,6 +443,8 @@ git clone https://github.com/priyansh21112002/VR-MR-data-pipeline.git vr-pipelin
 cd vr-pipeline/Backend~
 docker compose up data-receiver -d
 ```
+
+This works identically on macOS, Linux, and Windows (with Docker Desktop installed).
 
 ### Running Analysis
 
@@ -430,11 +464,14 @@ docker compose run llm python main.py --batch /data/ --output /data/outputs/
 
 ### Wireless Upload Flow (Quest 3)
 
-1. Quest 3 connects to the same WiFi network as the PC.
+1. Quest 3 connects to the same WiFi network as the computer running the backend.
 2. On the Quest, `MRBackendConfig` UI shows the backend URL (editable at runtime).
-3. When a session ends, `SessionUploader` zips the session folder and POSTs it to the PC backend.
-4. The `data-receiver` service extracts it into `Data collection/` on the PC.
-5. If upload fails, data remains on Quest local storage — use `adb pull` as backup.
+3. When a session ends, `SessionUploader` zips the session folder and POSTs it to the backend.
+4. The `data-receiver` service extracts it into the `data/` folder on the host machine.
+5. If upload fails, data remains on Quest local storage — recover with:
+   ```bash
+   adb pull /sdcard/Android/data/com.YourCompany.YourApp/files/Data\ collection/ ./recovered/
+   ```
 
 ---
 
