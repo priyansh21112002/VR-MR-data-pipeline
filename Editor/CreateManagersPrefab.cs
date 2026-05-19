@@ -103,6 +103,7 @@ public static class CreateManagersPrefab
         Undo.AddComponent<VRPerformanceTracker>(go);
         Undo.AddComponent<PipelineConfig>(go);
         Undo.AddComponent<SessionUploader>(go);
+        Undo.AddComponent<RealtimeDataStreamer>(go);
 
         // Task system components
         Undo.AddComponent<GenericSceneManager>(go);
@@ -117,10 +118,10 @@ public static class CreateManagersPrefab
 
         Selection.activeGameObject = go;
 
-        Debug.Log("[VR Training] Created _Managers in scene with 11 components:\n" +
+        Debug.Log("[VR Training] Created _Managers in scene with 12 components:\n" +
                   "  SessionManager, LoggingManager, VRPerformanceTracker,\n" +
-                  "  PipelineConfig, SessionUploader, GenericSceneManager,\n" +
-                  "  TaskDefinitionManager, TaskSystemIntegration,\n" +
+                  "  PipelineConfig, SessionUploader, RealtimeDataStreamer,\n" +
+                  "  GenericSceneManager, TaskDefinitionManager, TaskSystemIntegration,\n" +
                   "  PathDataCollector, IdealPathManager, PathAnalytics\n\n" +
                   "Next step: Create or assign a TaskDefinitionAsset via\n" +
                   "  VR Training → Create New Task Definition\n" +
@@ -161,6 +162,7 @@ public static class CreateManagersPrefab
         Undo.AddComponent<LoggingManager>(go);
         Undo.AddComponent<PipelineConfig>(go);
         Undo.AddComponent<SessionUploader>(go);
+        Undo.AddComponent<RealtimeDataStreamer>(go);
 
         // Task system components
         Undo.AddComponent<GenericSceneManager>(go);
@@ -194,10 +196,11 @@ public static class CreateManagersPrefab
             : "⚠ No OVRCameraRig found. Add Meta Building Blocks (Camera Rig, Passthrough) first.";
 
         Debug.Log("[VR Training] Created _Managers (MR) in scene with components:\n" +
-                  "  SessionManager, LoggingManager, PipelineConfig, SessionUploader,\n" +
+                  "  SessionManager, LoggingManager, PipelineConfig,\n" +
+                  "  SessionUploader, RealtimeDataStreamer,\n" +
                   "  GenericSceneManager, TaskDefinitionManager,\n" +
                   "  PathDataCollector, IdealPathManager, PathAnalytics,\n" +
-                  "  MetaInteractionBridge, MRPerformanceTracker\n" +
+                  "  MetaInteractionBridge, MRPerformanceTracker, VRPerformanceTracker\n" +
                   "  + BackendConfig child with MRBackendConfig\n\n" +
                   $"  {ovrStatus}\n\n" +
                   "Next step: Create or assign a TaskDefinitionAsset via\n" +
