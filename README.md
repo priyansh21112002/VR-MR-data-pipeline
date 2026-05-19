@@ -1,80 +1,74 @@
 # VR/MR Training Data Pipeline
 
 [![Unity 6](https://img.shields.io/badge/Unity-6000.0+-black?logo=unity)](https://unity.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![OpenXR](https://img.shields.io/badge/OpenXR-1.14+-blue)](https://www.khronos.org/openxr/)
 [![Meta Quest 3](https://img.shields.io/badge/Meta%20Quest%203-MR-purple)](https://www.meta.com/quest/quest-3/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-An **environment-agnostic data collection, task system, and analysis pipeline** for VR/MR training research. Captures spatial, temporal, behavioral, and task-specific data at 10Hz across any XR environment. Includes LLM-powered natural language analysis via NVIDIA API.
-
----
-
-## Features
-
-- **7 Data Loggers** — Performance (10Hz), Spatial, Temporal, Activity-Specific, Behavioral, Error/Metrics, Task Events
-- **Data-Driven Task System** — Define training tasks via ScriptableObject Inspector (no C# needed)
-- **Dual XR Support** — XR Interaction Toolkit (OpenXR) + Meta Interaction SDK (Quest 3 MR)
-- **One-Click Scene Setup** — Menu items to create fully-wired `_Managers` for VR or MR scenes
-- **Wireless Data Upload** — Session data automatically uploaded from Quest 3 to PC backend over WiFi
-- **Runtime Backend Config** — On-device UI panel to configure backend IP address on Quest 3
-- **Python Analysis Pipeline** — Heatmaps, path comparisons, dashboards, cumulative cross-session analysis
-- **LLM-Powered Reports** — Natural language performance reports via NVIDIA API (optional)
-- **Path Analysis** — Ideal path computation, actual vs. ideal comparison, efficiency scoring
-- **Zone-Aware Analysis** — Collision and dwell time breakdown by spatial zone
-- **Scene Exporter** — Auto-generates `scene_metadata.json` for environment overlay on analytics plots
+Environment-agnostic data collection and analysis pipeline for VR/MR training research. Captures spatial, temporal, behavioral, and task-specific data at 10Hz. Includes LLM-powered analysis via NVIDIA API.
 
 ---
 
-## Prerequisites
+## Table of Contents
 
-Before installing this package, ensure you have the following installed in your Unity project:
-
-| Dependency | Version | How to Install |
-|---|---|---|
-| **OpenXR Plugin** | 1.14+ | Package Manager → Unity Registry → OpenXR Plugin |
-| **XR Interaction Toolkit** | 3.1+ | Package Manager → Unity Registry → XR Interaction Toolkit |
-| **XR Hands** | 1.5+ | Package Manager → Unity Registry → XR Hands |
-| **Input System** | 1.16+ | Package Manager → Unity Registry → Input System |
-| **XR Management** | 4.5+ | Package Manager → Unity Registry → XR Plugin Management |
-| **Meta XR SDK** | 71+ | Add Meta scoped registry (see below), then install `com.meta.xr.sdk.all` |
-| **TextMeshPro** | — | Usually pre-installed. Import TMP Essentials when prompted. |
-
-### Adding Meta Scoped Registry
-
-Add this to your project's `Packages/manifest.json` under `scopedRegistries`:
-
-```json
-{
-  "scopedRegistries": [
-    {
-      "name": "Meta XR SDK",
-      "url": "https://npm.developer.oculus.com",
-      "scopes": ["com.meta.xr"]
-    }
-  ]
-}
-```
-
-Then install `com.meta.xr.sdk.all` from Package Manager.
+1. [Install Prerequisites FIRST](#1-install-prerequisites-first)
+2. [Install This Pipeline](#2-install-this-pipeline)
+3. [Post-Install: Fix HTTP Setting](#3-post-install-fix-http-setting)
+4. [Setup VR Scene (PC VR)](#4-setup-vr-scene-pc-vr)
+5. [Setup MR Scene (Quest 3)](#5-setup-mr-scene-quest-3)
+6. [Configure Tasks](#6-configure-tasks)
+7. [Backend Setup (PC)](#7-backend-setup-pc)
+8. [Build & Run on Quest 3](#8-build--run-on-quest-3)
+9. [Analyze Data](#9-analyze-data)
+10. [Troubleshooting & Common Failures](#10-troubleshooting--common-failures)
 
 ---
 
-## Installation
+## 1. Install Prerequisites FIRST
 
-### Via Git URL (Recommended)
+> **⚠️ You MUST install these before adding the pipeline package.** The pipeline compiles against these assemblies — without them, you'll get compilation errors.
 
-1. Open **Window → Package Manager**
-2. Click **+** → **Add package from git URL...**
-3. Enter:
+Install all of these from **Window → Package Manager → Unity Registry**:
+
+| Package | Min Version | Notes |
+|---------|-------------|-------|
+| **OpenXR Plugin** | 1.14+ | Required for all XR |
+| **XR Interaction Toolkit** | 3.1+ | Required for VR mode (XRI) |
+| **XR Plugin Management** | 4.5+ | Required for XR loader config |
+| **Input System** | 1.16+ | Required (new input system) |
+| **XR Hands** | 1.5+ | Optional (hand tracking) |
+
+For **Meta Quest 3 / MR** projects, also install Meta XR SDK:
+
+1. Add Meta's scoped registry to `Packages/manifest.json`:
+   ```json
+   {
+     "scopedRegistries": [
+       {
+         "name": "Meta XR SDK",
+         "url": "https://npm.developer.oculus.com",
+         "scopes": ["com.meta.xr"]
+       }
+     ]
+   }
+   ```
+2. Open Package Manager → search for **Meta XR SDK All** (`com.meta.xr.sdk.all`) → Install
+
+**TextMeshPro** — Usually pre-installed. If Unity prompts you to import TMP Essentials, do it.
+
+---
+
+## 2. Install This Pipeline
+
+After all prerequisites are installed:
+
+1. **Window → Package Manager → + → Add package from git URL**
+2. Enter:
    ```
    https://github.com/priyansh21112002/VR-MR-data-pipeline.git
    ```
-4. Click **Add**
+3. Click **Add** — wait for import to complete
 
-### Via manifest.json
-
-Add to your `Packages/manifest.json`:
-
+**Alternative** — add directly to `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
@@ -85,101 +79,121 @@ Add to your `Packages/manifest.json`:
 
 ---
 
-## Quick Start
+## 3. Post-Install: Fix HTTP Setting
 
-### Option A: VR Scene (XR Interaction Toolkit / OpenXR)
+Unity 6 blocks HTTP connections by default. The pipeline streams data over local WiFi using HTTP (not HTTPS), so you must allow it:
 
-1. **Set up your scene** with an XR Origin, controllers, and any grabbable objects.
-2. **Menu bar → VR Training → Setup VR Scene (XRI)**
-   - This creates a `_Managers` GameObject with all 11 pipeline components pre-wired.
-   - You will be prompted to create or assign a `TaskDefinitionAsset`.
-3. **Configure your tasks** in the Inspector (see [Task System](#task-system) below).
-4. Enter Play Mode with your VR headset connected.
+1. **Edit → Project Settings**
+2. **Search for `HTTP`** in the search bar
+3. Find **"Allow downloads over HTTP"** (under Player)
+4. Change from `Not Allowed` → **`Always Allowed`**
 
-### Option B: MR Scene (Meta Quest 3 with Passthrough)
-
-1. **Add Meta Building Blocks** to your scene first:
-   - Camera Rig (with OVRCameraRig)
-   - Passthrough
-   - Hand Tracking / Controller Tracking
-   - Interaction (OVRInteractionComprehensive)
-   - MR Utility Kit *(optional, for room scanning)*
-2. **Menu bar → VR Training → Setup MR Scene (Meta)**
-   - This creates a `_Managers` GameObject with all pipeline components plus MR-specific bridges:
-     - `MetaInteractionBridge` — bridges Meta Interaction SDK grab events to the task system
-     - `MRPerformanceTracker` — injects OVRCameraRig head/hand anchors into VRPerformanceTracker
-     - `VRPerformanceTracker` — core tracker that all downstream loggers read from
-   - Also creates a `BackendConfig` child with `MRBackendConfig` for runtime backend URL configuration on Quest 3.
-   - Auto-detects `OVRCameraRig` and warns if not found.
-3. **Configure your tasks** in the Inspector (see [Task System](#task-system) below).
-4. Build for Android (ARM64, IL2CPP) and deploy to Quest 3.
-
-### Creating and Assigning Tasks
-
-1. **Menu bar → VR Training → Create New Task Definition**
-   - Creates a new `TaskDefinitionAsset` in `Assets/VR Training/`.
-2. **Configure in the Inspector:**
-   - Set `primaryObjectPrefix` to match your grabbable objects (e.g., `"Box"` for `Box_0`, `Box_1`, ...)
-   - Set `targetObjectPrefix` to match your target positions (e.g., `"Target"` for `Target_0`, `Target_1`, ...)
-   - Set `maxObjectIndex` to the highest index in your scene
-   - Click **"Auto-populate Tasks from Scene Objects"** to generate pick-and-place tasks automatically
-   - Click **"Auto-populate Zones from Scene"** to detect spatial zones from zone markers, BoxColliders, or tagged objects
-   - Edit individual subtasks as needed
-3. **Menu bar → VR Training → Assign Selected Asset to Scene**
-   - Or drag the asset directly onto `GenericSceneManager.taskAsset` on the `_Managers` object.
-
-### Configure LLM Analysis (Optional)
-
-- Select `_Managers` → Find the **PipelineConfig** component
-- Enter your **NVIDIA API key** (get one free at [build.nvidia.com](https://build.nvidia.com))
-- The key is saved to `PlayerPrefs` and written to `pipeline_config.json` for the Python analysis pipeline
-
-### Configure Backend URL (MR / Quest 3)
-
-- The `MRBackendConfig` component on the `BackendConfig` child provides a runtime UI panel on Quest 3.
-- At runtime, press the **⚙ Config** button to show/hide the panel.
-- Enter your PC's IP address and port (e.g., `http://192.168.1.100:8080`).
-- Click **Apply & Save** — the URL persists across sessions via `PlayerPrefs`.
-- Click **Test Connection** to verify connectivity, or **Upload Now** to push data immediately.
+> The pipeline's `AndroidNetworkConfigSetup` script tries to do this automatically on first import, but if it doesn't trigger, do it manually. Without this, all WiFi uploads from Quest 3 will fail silently.
 
 ---
 
-## End-to-End: New System Setup
+## 4. Setup VR Scene (PC VR)
 
-Complete walkthrough for a **new machine + new Unity project + Meta Quest 3 MR passthrough** scenario (e.g., picking virtual boxes from floor and placing them on tables in your real lab).
+For PC-based VR (HTC Vive, Valve Index, etc.) using XR Interaction Toolkit:
 
-### Prerequisites
+1. Set up your scene with an XR Origin, controllers, and grabbable objects
+2. **Menu → VR Training → Setup VR Scene (XRI)**
+   - Creates `_Managers` GameObject with all 11 pipeline components
+   - Prompts you to create or assign a `TaskDefinitionAsset`
+3. Done — enter Play Mode with headset connected
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
-- Unity 6 (6000.0+) with Android build support
-- Meta Quest 3 on the same WiFi network as your computer
+---
 
-### Step 1: Install the Pipeline
+## 5. Setup MR Scene (Quest 3)
 
-In your Unity project:
-1. **Window → Package Manager → + → Add package from git URL**
-2. Enter: `https://github.com/priyansh21112002/VR-MR-data-pipeline.git`
-3. Install Meta XR SDK (`com.meta.xr.sdk.all`) if not already installed
+For Meta Quest 3 with passthrough mixed reality:
 
-### Step 2: Set Up Your MR Scene
+### Step 1: Add Meta Building Blocks
 
-1. Add Meta Building Blocks: Camera Rig, Passthrough, Hand Tracking, Interaction
-2. Add your grabbable boxes (`Box_0`, `Box_1`, ...) with `Grabbable` component
-3. Add target positions (`Target_0`, `Target_1`, ...) on/near tables
-4. **Menu → VR Training → Setup MR Scene (Meta)** — creates `_Managers` with full pipeline
+Add these to your scene first (via Meta's Building Blocks window):
+- Camera Rig (OVRCameraRig)
+- Passthrough
+- Hand Tracking / Controller Tracking
+- Interaction (OVRInteractionComprehensive)
 
-### Step 3: Configure Tasks
+### Step 2: Run Setup Menu
+
+**Menu → VR Training → Setup MR Scene (Meta)**
+
+This creates `_Managers` with all pipeline components plus MR bridges:
+- `MetaInteractionBridge` — bridges Meta grab events to the task system
+- `MRPerformanceTracker` — injects OVR head/hand anchors into tracking
+- `BackendConfig` child with `MRBackendConfig` — runtime UI for backend URL
+
+### Step 3: Set the Backend IP Address (3 places)
+
+> **⚠️ IMPORTANT:** The backend IP must be set in **3 places** on the `_Managers` object. This is your PC's local IP where Docker is running.
+
+Find your PC's IP:
+
+| OS | Command | Example Output |
+|----|---------|----------------|
+| **Windows** | `ipconfig` | `IPv4 Address: 192.168.1.100` |
+| **macOS** | `ifconfig en0` | `inet 192.168.1.100` |
+| **Linux** | `ip addr show wlan0` | `inet 192.168.1.100/24` |
+
+Then set the URL (format: `http://<YOUR_PC_IP>:8080`) in these 3 components:
+
+| # | Component | Field | Location |
+|---|-----------|-------|----------|
+| 1 | **SessionUploader** | `backendUrl` | On `_Managers` |
+| 2 | **RealtimeDataStreamer** | `backendUrl` | On `_Managers` |
+| 3 | **MRBackendConfig** | `defaultBackendUrl` | On `_Managers/BackendConfig` child |
+
+Example value for all three: `http://192.168.1.100:8080`
+
+> **Why 3 places?** SessionUploader handles end-of-session zip upload. RealtimeDataStreamer streams data live during the session. MRBackendConfig provides the runtime UI on Quest so users can change the IP without rebuilding.
+
+---
+
+## 6. Configure Tasks
+
+Tasks are defined via ScriptableObject — no code needed:
 
 1. **Menu → VR Training → Create New Task Definition**
-2. Set `primaryObjectPrefix` = `"Box"`, `targetObjectPrefix` = `"Target"`, `maxObjectIndex` = `3`
-3. Click **Auto-populate Tasks from Scene Objects**
-4. Assign the asset to `_Managers` via **Menu → VR Training → Assign Selected Asset to Scene**
+2. In the Inspector:
+   - `primaryObjectPrefix` = name prefix of grabbable objects (e.g., `"Box"` for `Box_0`, `Box_1`)
+   - `targetObjectPrefix` = name prefix of target positions (e.g., `"Target"` for `Target_0`, `Target_1`)
+   - `maxObjectIndex` = highest index number in your scene
+3. Click **"Auto-populate Tasks from Scene Objects"** — generates pick-and-place tasks automatically
+4. Click **"Auto-populate Zones from Scene"** — detects spatial zones
+5. **Menu → VR Training → Assign Selected Asset to Scene** — links it to `_Managers`
 
-### Step 4: Export & Start Backend
+### Task Flow
+
+Each task has subtasks: `navigate` → `pick` → `carry` → `place`
+
+The pipeline detects XR grab events (via XRI `TaskSystemIntegration` or Meta `MetaInteractionBridge`) and automatically advances through subtasks.
+
+---
+
+## 7. Backend Setup (PC)
+
+The backend receives data from Quest 3 over WiFi and runs analysis.
+
+### Requirements
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+- PC and Quest 3 on the **same WiFi network**
+
+### Export Backend (One-Click)
 
 1. **Menu → VR Training → Export Backend Setup...**
-2. Choose a folder (e.g., `~/vr-training-backend` on Mac or `C:\vr-training-backend` on Windows)
-3. Start the backend:
+2. Choose a folder:
+   - Windows: `C:\vr-training-backend`
+   - Mac/Linux: `~/vr-training-backend`
+3. This exports everything: Docker files, start scripts, .env config, data folder
+
+### Start the Backend
+
+**Windows:**
+```
+Double-click START_BACKEND.bat
+```
 
 **macOS / Linux:**
 ```bash
@@ -188,205 +202,177 @@ chmod +x start_backend.sh
 ./start_backend.sh
 ```
 
-**Windows:**
+**Or manually with Docker Compose:**
+```bash
+docker compose up data-receiver -d
 ```
-Double-click START_BACKEND.bat
+
+### Verify It's Running
+
+Open in browser: `http://localhost:8080/api/health`
+
+Expected response:
+```json
+{"status": "ok", "streaming": true, "active_streams": 0}
 ```
 
-4. Verify: open `http://localhost:8080/api/health` in browser → `{"status":"ok"}`
+---
 
-### Step 5: Configure Connection
-
-Find your computer's local IP address:
-
-| OS | Command | Look for |
-|----|---------|----------|
-| **macOS** | `ifconfig en0` | `inet 192.168.x.x` |
-| **Windows** | `ipconfig` | `IPv4 Address: 192.168.x.x` |
-| **Linux** | `ip addr show wlan0` | `inet 192.168.x.x` |
-
-Then in Unity:
-1. On `_Managers` → `SessionUploader` → set `backendUrl` = `http://192.168.x.x:8080`
-2. On `BackendConfig` → `MRBackendConfig` → set same URL (this is the runtime-editable copy)
-
-### Step 6: Build & Deploy
+## 8. Build & Run on Quest 3
 
 1. **File → Build Settings → Android → Switch Platform**
-2. Set Texture Compression: ASTC, Architecture: ARM64, Scripting Backend: IL2CPP
-3. Connect Quest 3 via USB (or WiFi ADB)
+2. Configure:
+   - Texture Compression: **ASTC**
+   - Target Architecture: **ARM64**
+   - Scripting Backend: **IL2CPP**
+3. Connect Quest 3 via USB (enable Developer Mode in Meta app first)
 4. **Build And Run**
 
-### Step 7: Run Training Session
+### First Run Checklist
 
-1. Launch the app on Quest 3
-2. Verify backend connection via the runtime config panel (green = connected)
-3. Pick boxes → place on tables → pipeline records everything automatically
-4. Quit the app → data auto-uploads to your computer
+- [ ] Backend is running on PC (check `http://<PC_IP>:8080/api/health`)
+- [ ] Quest 3 is on the same WiFi as PC
+- [ ] IP address is set in all 3 places (Step 5 above)
+- [ ] HTTP is set to "Always Allowed" in Project Settings (Step 3 above)
+- [ ] Tasks are configured and assigned to `_Managers`
 
-### Step 8: Analyze Results
+---
+
+## 9. Analyze Data
+
+After sessions are uploaded:
 
 ```bash
 cd ~/vr-training-backend   # or C:\vr-training-backend on Windows
-
-# Check received sessions
-curl http://localhost:8080/api/sessions
-
-# Generate visualizations (17 charts)
-docker compose run analysis python analyze.py
-
-# Generate LLM report (optional, needs NVIDIA API key in .env)
-docker compose run llm python main.py --session /data/session_1_*/
 ```
 
-Results appear in the `data/session_*/` folder: PNG charts, CSVs, and markdown reports.
+**Check received sessions:**
+```bash
+curl http://localhost:8080/api/sessions
+```
+
+**Generate analysis (17 charts):**
+```bash
+docker compose run analysis python analyze.py
+```
+
+**Generate dashboard:**
+```bash
+docker compose run analysis python generate_dashboard.py
+```
+
+**Cross-session comparison:**
+```bash
+docker compose run analysis python cumulative_analysis.py
+```
+
+**LLM-powered natural language report** (requires NVIDIA API key in PipelineConfig):
+```bash
+docker compose run llm python main.py --session /data/session_1_*/
+docker compose run llm python main.py --batch /data/ --output /data/outputs/
+```
+
+Results appear in: `data/session_*/` — PNG charts, CSVs, markdown reports.
+
+---
+
+## 10. Troubleshooting & Common Failures
+
+### Compilation Errors After Install
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `CS0246: OVRCameraRig not found` | Meta XR SDK not installed | Install `com.meta.xr.sdk.all` from Package Manager (add scoped registry first) |
+| `CS0246: XRGrabInteractable not found` | XR Interaction Toolkit not installed | Install from Package Manager → Unity Registry |
+| `CS0246: InputAction not found` | Input System not installed | Install from Package Manager → Unity Registry |
+
+**Fix:** Install the prerequisites listed in [Step 1](#1-install-prerequisites-first), then reimport.
+
+---
+
+### WiFi Upload Fails (Quest → PC)
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| Upload timeout | Wrong IP address | Verify IP in all 3 places. Run `ipconfig`/`ifconfig` again — IP may have changed. |
+| Connection refused | Backend not running | Start backend with `docker compose up data-receiver -d` |
+| Connection refused | Firewall blocking port 8080 | Allow port 8080 in Windows Firewall / macOS firewall |
+| Silent failure, no error | HTTP blocked by Unity | **Project Settings → search "HTTP" → set to "Always Allowed"** |
+| Upload fails only on Quest | Devices on different networks | Ensure Quest and PC are on the same WiFi (not guest network, not 5GHz vs 2.4GHz split) |
+
+**Recovery if upload fails** — data stays on Quest storage:
+```bash
+adb pull /sdcard/Android/data/com.YourCompany.YourApp/files/Data\ collection/ ./recovered/
+```
+
+---
+
+### Missing Scripts on _Managers
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| "Missing Script" on prefab components | GUID mismatch from old prefab | Don't use the Samples prefab. Use the one-click menu: **VR Training → Setup MR Scene (Meta)** |
+| Components show "None" references | Scene wasn't set up before pipeline | Add Meta Building Blocks first, then run Setup menu |
+
+---
+
+### Tasks Not Progressing
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| Objects grabbed but task doesn't advance | Object naming doesn't match | Ensure objects are named `Box_0`, `Box_1` (matching `primaryObjectPrefix` + index) |
+| "No TaskDefinitionAsset assigned" warning | Asset not linked | **Menu → VR Training → Assign Selected Asset to Scene** |
+| Tasks advance on grab but never complete | No target objects | Add `Target_0`, `Target_1` objects at destination positions |
+
+---
+
+### Backend/Docker Issues
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| `docker compose` not found | Docker not installed or old version | Install [Docker Desktop](https://www.docker.com/products/docker-desktop/). Use `docker-compose` (hyphen) on older versions. |
+| Port 8080 already in use | Another service on that port | Change port in `.env` and `docker-compose.yml`, update all 3 IP fields in Unity |
+| Analysis script fails | No sessions received yet | Run a session first, verify with `curl http://localhost:8080/api/sessions` |
+
+---
+
+### Android Build Errors
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `res/xml/network_security_config.xml` conflict | Legacy config file in project | Delete `Assets/Plugins/Android/res/` folder entirely. The pipeline handles this at Gradle build time via `FixNetworkSecurityConfig.cs`. |
+| Manifest merger failed | Conflicting AndroidManifest.xml | Check `Assets/Plugins/Android/AndroidManifest.xml` for duplicates. The pipeline auto-creates one if missing. |
+| IL2CPP build slow / fails | Missing NDK | Install Android NDK via Unity Hub → Installs → Android Build Support |
+
+---
+
+## Features Overview
+
+- **7 Data Loggers** — Performance (10Hz), Spatial, Temporal, Activity-Specific, Behavioral, Error/Metrics, Task Events
+- **Data-Driven Task System** — ScriptableObject Inspector, no code needed for new scenarios
+- **Dual XR Support** — XR Interaction Toolkit (OpenXR VR) + Meta Interaction SDK (Quest 3 MR)
+- **Real-Time Streaming** — Data streams to PC live during session (every 2 seconds) — no data loss on app quit
+- **End-of-Session Upload** — Fallback zip upload if streaming didn't send all data
+- **Runtime Backend Config** — On-device UI to change IP without rebuilding
+- **Python Analysis** — Heatmaps, path comparisons, dashboards, cumulative cross-session analysis
+- **LLM Reports** — Natural language performance reports via NVIDIA API
+- **Path Analysis** — Ideal path computation, actual vs. ideal comparison, efficiency scoring
+- **Zone Analysis** — Collision and dwell time breakdown by spatial zone
+- **Scene Exporter** — Auto-generates `scene_metadata.json` for environment overlay on plots
 
 ---
 
 ## Menu Reference
 
-All menu items are under the **VR Training** top-level menu:
-
-| Menu Item | Description |
-|---|---|
-| **VR Training → Setup VR Scene (XRI)** | Creates `_Managers` with all VR pipeline components (11 components). Prompts to create/assign a TaskDefinitionAsset. |
-| **VR Training → Setup MR Scene (Meta)** | Creates `_Managers` with VR + MR-specific components (MetaInteractionBridge, MRPerformanceTracker) + BackendConfig child. |
-| **VR Training → Open Task Definition Asset** | Selects and pings the TaskDefinitionAsset assigned to the current scene's GenericSceneManager. |
-| **VR Training → Show All Task Definitions** | Lists all TaskDefinitionAssets in the project with task/zone counts. |
-| **VR Training → Create New Task Definition** | Creates a new TaskDefinitionAsset in `Assets/VR Training/`. |
-| **VR Training → Assign Selected Asset to Scene** | Assigns the currently selected TaskDefinitionAsset to the scene's GenericSceneManager. |
-| **VR Training → Create _Managers Prefab Template** | Saves the existing `_Managers` in the scene as a reusable prefab (clears scene-specific references). |
-| **VR Training → Export Backend Setup...** | Exports the Docker backend (data-receiver, analysis, LLM) to any folder on your PC. Creates start scripts, .env config, and a data folder. No need to clone the repo separately. |
-| **VR Analytics → Export Scene for Configuration** | Opens the Scene Exporter window — auto-detects floor, walls, equipment, zones, and interactables, then exports `scene_metadata.json` for the Python analysis overlay. |
-
----
-
-## Architecture
-
-### VR Scene (_Managers)
-
-```
-_Managers
-├── SessionManager          → Session lifecycle, folder creation
-├── LoggingManager          → Orchestrates all 7 data loggers
-├── VRPerformanceTracker    → Head/hand tracking at 10Hz
-├── PipelineConfig          → NVIDIA API key management
-├── SessionUploader         → WiFi upload to backend
-├── GenericSceneManager     → Task flow controller
-├── TaskDefinitionManager   → Reads TaskDefinitionAsset
-├── TaskSystemIntegration   → XRI grab event → task progression
-├── PathDataCollector       → Records actual movement paths
-├── IdealPathManager        → Computes ideal paths between targets
-└── PathAnalytics           → Actual vs. ideal path comparison
-```
-
-### MR Scene (_Managers)
-
-```
-_Managers
-├── SessionManager
-├── LoggingManager
-├── VRPerformanceTracker     ← MRPerformanceTracker injects OVR anchors into this
-├── PipelineConfig
-├── SessionUploader
-├── GenericSceneManager
-├── TaskDefinitionManager
-├── MetaInteractionBridge    ← Replaces TaskSystemIntegration for Meta SDK
-├── MRPerformanceTracker     ← Bridges OVRCameraRig → VRPerformanceTracker
-├── PathDataCollector
-├── IdealPathManager
-├── PathAnalytics
-└── BackendConfig (child)
-    └── MRBackendConfig      ← Runtime UI for backend URL on Quest 3
-```
-
-### Data Flow
-
-```
-Quest 3 / VR Headset                    PC Backend
-─────────────────                       ──────────
-_Managers GameObject                    Docker Services
-├── LoggingManager ──► 7 CSV files      ├── data-receiver (port 8080)
-├── SessionUploader ──► WiFi POST ──►   ├── analysis (Python charts)
-└── PipelineConfig ──► API key          └── llm (NVIDIA API reports)
-                                             │
-                                             ▼
-                                        Data collection/
-                                          session_N_*/
-                                            ├── session_info.json
-                                            ├── pipeline_config.json
-                                            ├── *_performance_data_*.csv
-                                            ├── task_events_log.csv
-                                            ├── SpatialData/*.csv
-                                            └── TemporalData/*.csv
-```
-
----
-
-## CSV Data Schema
-
-All sessions produce identical CSV schemas regardless of VR or MR mode:
-
-| File | Frequency | Content |
-|------|-----------|---------|
-| `*_performance_data_*.csv` | 10Hz | Head/hand positions, activity, collisions, interactions |
-| `task_events_log.csv` | Event-driven | Task state transitions, pick/place events |
-| `SpatialData/spatial_data_*.csv` | 10Hz | Positions, velocities, gaze, zone transitions |
-| `TemporalData/time_series_data_*.csv` | 10Hz | Performance scores over time |
-| `activity_data_*.csv` | Event-driven | Per-activity breakdowns |
-| `behavioral_profiles_*.csv` | Per-session | Aggregated behavioral features |
-| `task_metrics_*.csv` | Per-task | Completion metrics, efficiency grades |
-
----
-
-## Task System
-
-Tasks are defined entirely in the Inspector via `TaskDefinitionAsset` ScriptableObjects:
-
-```
-TaskDefinitionAsset
-├── primaryObjectPrefix: "Box"        ← matches Box_0, Box_1, Box_2, ...
-├── targetObjectPrefix: "Target"      ← matches Target_0, Target_1, ...
-├── maxObjectIndex: 3
-├── tasks:                            ← auto-populated or manually defined
-│   ├── Task 1: Pick Box_0 → Place on Target_0
-│   │   └── Subtasks: navigate → pick → carry → place
-│   ├── Task 2: Pick Box_1 → Place on Target_1
-│   └── ...
-└── zones:                            ← auto-populated from scene
-    ├── PickupArea: center, size, type="storage"
-    └── PlacementArea: center, size, type="task_area"
-```
-
-**Subtask types:** `navigate`, `pick`, `carry`, `place`, `scan`, `press_button`, `verify`, `wait`, `decide`, `attach`
-
-**Zone types** (auto-inferred from name): `storage`, `assembly`, `hazard`, `inspection`, `packaging`, `shipping`, `aisle`, `rest_area`, `treatment`, `preparation`, `laboratory`, `task_area`
-
-### Auto-Populate Buttons
-
-The `TaskDefinitionAsset` Inspector includes two convenience buttons:
-
-- **Auto-populate Tasks from Scene Objects** — Scans the active scene for GameObjects matching `{primaryObjectPrefix}_{i}` and `{targetObjectPrefix}_{i}`, creates one navigate→pick→carry→place task per pair.
-- **Auto-populate Zones from Scene** — Detects zones using three strategies:
-  1. `ZoneMarkers/Zone_*/F_*` children (floor quads — uses localPosition & localScale)
-  2. GameObjects named `Zone_*` with BoxColliders (uses collider bounds)
-  3. GameObjects tagged `"Zone"` (uses renderer or collider bounds)
-
----
-
-## Scene Exporter
-
-**Menu bar → VR Analytics → Export Scene for Configuration**
-
-The Scene Exporter auto-detects your scene's layout and exports `scene_metadata.json` for the Python `environment_overlay.py` to render top-down scene overlays on analytics plots.
-
-**Auto-detected elements:**
-- **Floor** — Largest ground-level surface (MeshCollider, Renderer, or BoxCollider)
-- **Walls** — Synthesized from floor perimeter
-- **Equipment** — Mid-sized objects with renderers (shelves, tables, machines, etc.)
-- **Zones** — From `TaskDefinitionAsset` or auto-detected from named objects
-- **Interactables** — Objects with `XRGrabInteractable` or similar components
-
-Works with any scene — warehouse, factory, hospital, office, outdoors.
+| Menu Item | What It Does |
+|-----------|--------------|
+| **VR Training → Setup VR Scene (XRI)** | Creates `_Managers` with 11 VR pipeline components |
+| **VR Training → Setup MR Scene (Meta)** | Creates `_Managers` with VR + MR components + BackendConfig |
+| **VR Training → Create New Task Definition** | Creates a new TaskDefinitionAsset |
+| **VR Training → Assign Selected Asset to Scene** | Links selected asset to `_Managers` |
+| **VR Training → Fix Android Network Settings** | Re-applies HTTP/manifest fixes if needed |
+| **VR Training → Export Backend Setup...** | Exports Docker backend to any folder |
+| **VR Analytics → Export Scene for Configuration** | Exports scene_metadata.json for Python overlay |
 
 ---
 
@@ -395,115 +381,39 @@ Works with any scene — warehouse, factory, hospital, office, outdoors.
 Import via Package Manager → **VR/MR Training Data Pipeline** → **Samples**:
 
 | Sample | Description |
-|---|---|
-| **Warehouse Task Definition** | Pre-configured `TaskDefinitionAsset` for warehouse pick-and-place (8 tasks, 7 zones) + factory variant |
-| **MR Lab Task Definition** | Pre-configured `TaskDefinitionAsset` for Mixed Reality lab environment (4 tasks) |
-| **Managers Prefab** | Pre-configured `_ManagersTemplate` prefab with all pipeline components (alternative to one-click menu setup) |
+|--------|-------------|
+| **Warehouse Task Definition** | 8 tasks, 7 zones — warehouse pick-and-place |
+| **MR Lab Task Definition** | 4 tasks — mixed reality lab environment |
+| **Managers Prefab** | Pre-configured `_Managers` template (alternative to menu setup) |
 
 ---
 
-## Backend Setup
+## Data Schema
 
-### One-Click Export (Recommended)
+All sessions produce identical CSV schemas regardless of VR or MR mode:
 
-**Menu bar → VR Training → Export Backend Setup...**
-
-This exports the Docker backend to any folder on your PC:
-1. Opens a folder picker — choose where to save (e.g., `C:\vr-training-backend`)
-2. Copies all Docker services (data-receiver, analysis, LLM)
-3. Creates a `START_BACKEND.bat` (Windows) / `start_backend.sh` (Mac/Linux)
-4. Creates a `.env` file with the data storage path pre-configured
-5. Creates a `data/` folder where sessions will be stored
-
-After exporting:
-
-**macOS / Linux:**
-```bash
-cd ~/vr-training-backend
-chmod +x start_backend.sh
-./start_backend.sh
-# Or run in background:
-docker compose up data-receiver -d
-```
-
-**Windows:**
-```
-Double-click START_BACKEND.bat
-:: Or from command line:
-cd C:\vr-training-backend
-docker compose up data-receiver -d
-```
-
-### Manual Setup (Alternative)
-
-If you prefer, clone the repo separately just for the backend:
-
-```bash
-git clone https://github.com/priyansh21112002/VR-MR-data-pipeline.git vr-pipeline
-cd vr-pipeline/Backend~
-docker compose up data-receiver -d
-```
-
-This works identically on macOS, Linux, and Windows (with Docker Desktop installed).
-
-### Running Analysis
-
-```bash
-# Start data receiver (always on, receives uploads from Quest over WiFi)
-docker compose up data-receiver -d
-
-# Run analysis on demand
-docker compose run analysis python analyze.py
-docker compose run analysis python generate_dashboard.py
-docker compose run analysis python cumulative_analysis.py
-
-# Run LLM analysis (API key auto-discovered from pipeline_config.json)
-docker compose run llm python main.py --session /data/session_1_*/
-docker compose run llm python main.py --batch /data/ --output /data/outputs/
-```
-
-### Wireless Upload Flow (Quest 3)
-
-1. Quest 3 connects to the same WiFi network as the computer running the backend.
-2. On the Quest, `MRBackendConfig` UI shows the backend URL (editable at runtime).
-3. When a session ends, `SessionUploader` zips the session folder and POSTs it to the backend.
-4. The `data-receiver` service extracts it into the `data/` folder on the host machine.
-5. If upload fails, data remains on Quest local storage — recover with:
-   ```bash
-   adb pull /sdcard/Android/data/com.YourCompany.YourApp/files/Data\ collection/ ./recovered/
-   ```
+| File | Frequency | Content |
+|------|-----------|---------|
+| `*_performance_data_*.csv` | 10Hz | Head/hand positions, activity, collisions |
+| `task_events_log.csv` | Event-driven | Task state transitions, pick/place events |
+| `SpatialData/spatial_data_*.csv` | 10Hz | Positions, velocities, gaze, zone transitions |
+| `TemporalData/time_series_data_*.csv` | 10Hz | Performance scores over time |
 
 ---
 
 ## Documentation
 
-Full documentation is available in the `Documentation~/` folder:
+Full docs in `Documentation~/` folder (invisible to Unity, visible in git):
 
-| Document | Description |
-|---|---|
-| **ARCHITECTURE.md** | Complete system architecture with flowcharts |
-| **MRIntegration.md** | MR-specific technical documentation (Meta SDK bridge pattern, Building Blocks) |
-| **PIPELINE_GUIDE.md** | Step-by-step pipeline usage |
-| **PIPELINE_USAGE_GUIDE.md** | 3-phase workflow guide (setup → collect → analyze) |
-| **ANALYSIS_GUIDE.md** | Python analysis scripts usage and configuration |
-| **VR_TRAINING_DATA_AND_ANALYSIS_REPORT.md** | Data collection methodology and human factors report |
-| **GENERIC_VR_TRAINING_PROJECT_REPORT.md** | Comprehensive project report |
-
----
-
-## Troubleshooting
-
-| Issue | Solution |
-|---|---|
-| **CS0246: OVRCameraRig not found** | Ensure Meta XR SDK is installed. The package uses reflection for Oculus types in Editor scripts — no direct dependency needed in the Editor assembly. |
-| **Missing Script on _Managers prefab** | Use the one-click menu setup instead: `VR Training → Setup VR Scene` or `Setup MR Scene`. This creates components directly, avoiding GUID mismatch issues. |
-| **"has no meta file" warnings** | This was fixed in v1.0.0. If you see this, update the package: Package Manager → select the package → Update. |
-| **No OVRCameraRig detected** | Add Meta Building Blocks (Camera Rig, Passthrough) to your scene **before** running `VR Training → Setup MR Scene`. |
-| **Backend upload fails** | Check that the PC and Quest are on the same WiFi network. Use the `MRBackendConfig` runtime UI to verify the IP and test connectivity. |
-| **Tasks not progressing** | Ensure your scene objects match the prefixes in `TaskDefinitionAsset` (e.g., `Box_0`, `Target_0`). Use **Auto-populate Tasks from Scene Objects** to regenerate. |
+| Document | Topic |
+|----------|-------|
+| ARCHITECTURE.md | System architecture and flowcharts |
+| MRIntegration.md | Meta SDK bridge pattern, Building Blocks |
+| PIPELINE_GUIDE.md | Step-by-step pipeline usage |
+| ANALYSIS_GUIDE.md | Python analysis scripts |
 
 ---
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT — see [LICENSE](LICENSE).
