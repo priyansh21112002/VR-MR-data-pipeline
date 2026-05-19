@@ -34,7 +34,7 @@ Install all of these from **Window → Package Manager → Unity Registry**:
 | **OpenXR Plugin** | 1.14+ | Required for all XR |
 | **XR Interaction Toolkit** | 3.1+ | Required for VR mode (XRI) |
 | **XR Plugin Management** | 4.5+ | Required for XR loader config |
-| **Input System** | 1.16+ | Required (new input system) |
+| **OpenXR Plugin** | 1.16+ | Required (new OpenXR Plugin) |
 | **XR Hands** | 1.5+ | Optional (hand tracking) |
 
 For **Meta Quest 3 / MR** projects, also install Meta XR SDK:
@@ -284,7 +284,7 @@ Results appear in: `data/session_*/` — PNG charts, CSVs, markdown reports.
 |-------|-------|-----|
 | `CS0246: OVRCameraRig not found` | Meta XR SDK not installed | Install `com.meta.xr.sdk.all` from Package Manager (add scoped registry first) |
 | `CS0246: XRGrabInteractable not found` | XR Interaction Toolkit not installed | Install from Package Manager → Unity Registry |
-| `CS0246: InputAction not found` | Input System not installed | Install from Package Manager → Unity Registry |
+| `CS0246: InputAction not found` | OpenXR Plugin not installed | Install from Package Manager → Unity Registry |
 
 **Fix:** Install the prerequisites listed in [Step 1](#1-install-prerequisites-first), then reimport.
 
