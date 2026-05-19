@@ -22,6 +22,7 @@ services:
       - "${DATA_PATH:-./data}:/data"
     environment:
       - DATA_DIR=/data
+      - PYTHONUNBUFFERED=1
     restart: unless-stopped
 
   # ── Python Analysis (on-demand) ───────────────────────────────

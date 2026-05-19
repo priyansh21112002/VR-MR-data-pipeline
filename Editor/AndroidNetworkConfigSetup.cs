@@ -61,11 +61,15 @@ namespace VRTraining.Editor
                 changesApplied++;
             }
 
-            // 2. Ensure AndroidManifest.xml exists and has correct settings
+            // 2. Set insecureHttpOption to "Always Allowed" (Unity 6 blocks HTTP by default)
+            if (SetInsecureHttpOption())
+                changesApplied++;
+
+            // 3. Ensure AndroidManifest.xml exists and has correct settings
             if (EnsureAndroidManifest())
                 changesApplied++;
 
-            // 3. Ensure network_security_config.xml exists
+            // 4. Ensure network_security_config.xml exists
             if (EnsureNetworkSecurityConfig())
                 changesApplied++;
 
@@ -84,14 +88,43 @@ namespace VRTraining.Editor
                 string message = changesApplied > 0
                     ? $"Applied {changesApplied} change(s):\n\n" +
                       "• Internet Access: Required\n" +
+                      "• Allow downloads over HTTP: Always Allowed\n" +
                       "• AndroidManifest: usesCleartextTraffic=true\n" +
                       "• network_security_config.xml: cleartext permitted\n\n" +
-                      "Your Quest 3 app can now stream data to a local HTTP backend."
+                      "Your Quest 3 app can now stream data to a local HTTP backend.\n" +
+                      "Note: FixNetworkSecurityConfig.cs also patches the build output."
                     : "All Android network settings are already configured correctly.\n\n" +
                       "Your Quest 3 app can stream data to a local HTTP backend.";
 
                 EditorUtility.DisplayDialog("VR Training — Android Network Config", message, "OK");
             }
+        }
+
+        /// <summary>
+        /// Sets Unity 6's insecureHttpOption to "Always Allowed" (value 1).
+        /// Unity 6 defaults to blocking HTTP via UnityWebRequest unless this is set.
+        /// Returns true if the setting was changed.
+        /// </summary>
+        private static bool SetInsecureHttpOption()
+        {
+            // insecureHttpOption is in ProjectSettings.asset:
+            // 0 = Not Allowed (default in Unity 6)
+            // 1 = Always Allowed
+            // We use SerializedObject to modify it programmatically
+            string projectSettingsPath = "ProjectSettings/ProjectSettings.asset";
+            if (!File.Exists(projectSettingsPath))
+                return false;
+
+            string content = File.ReadAllText(projectSettingsPath);
+            if (content.Contains("insecureHttpOption: 0"))
+            {
+                content = content.Replace("insecureHttpOption: 0", "insecureHttpOption: 1");
+                File.WriteAllText(projectSettingsPath, content);
+                Debug.Log("[VR Training] ✅ Set 'Allow downloads over HTTP' to 'Always Allowed' (insecureHttpOption: 1)");
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
