@@ -12,8 +12,11 @@ namespace VRTraining.Editor
     /// Quest 3 streams data to a local PC backend over WiFi using HTTP (not HTTPS).
     /// Android 9+ blocks cleartext HTTP by default. This script ensures:
     ///   1. INTERNET permission is enabled in Player Settings
-    ///   2. AndroidManifest.xml has usesCleartextTraffic="true"
-    ///   3. A network_security_config.xml exists allowing cleartext traffic
+    ///   2. Unity 6 insecureHttpOption is set to "Always Allowed"
+    ///   3. AndroidManifest.xml has usesCleartextTraffic="true"
+    ///
+    /// Note: FixNetworkSecurityConfig.cs handles the Gradle-level network_security_config
+    /// injection at build time (the correct approach for Unity 6).
     ///
     /// Runs once on package import (InitializeOnLoad) and can also be triggered
     /// manually via the VR Training menu.
@@ -23,7 +26,6 @@ namespace VRTraining.Editor
     {
         private const string PREFS_KEY = "VRTraining_AndroidNetworkConfigApplied_v1";
         private const string MANIFEST_PATH = "Assets/Plugins/Android/AndroidManifest.xml";
-        private const string NETWORK_CONFIG_PATH = "Assets/Plugins/Android/res/xml/network_security_config.xml";
 
         static AndroidNetworkConfigSetup()
         {
@@ -69,10 +71,6 @@ namespace VRTraining.Editor
             if (EnsureAndroidManifest())
                 changesApplied++;
 
-            // 4. Ensure network_security_config.xml exists
-            if (EnsureNetworkSecurityConfig())
-                changesApplied++;
-
             if (changesApplied > 0)
             {
                 AssetDatabase.Refresh();
@@ -89,10 +87,9 @@ namespace VRTraining.Editor
                     ? $"Applied {changesApplied} change(s):\n\n" +
                       "• Internet Access: Required\n" +
                       "• Allow downloads over HTTP: Always Allowed\n" +
-                      "• AndroidManifest: usesCleartextTraffic=true\n" +
-                      "• network_security_config.xml: cleartext permitted\n\n" +
+                      "• AndroidManifest: usesCleartextTraffic=true\n\n" +
                       "Your Quest 3 app can now stream data to a local HTTP backend.\n" +
-                      "Note: FixNetworkSecurityConfig.cs also patches the build output."
+                      "Note: FixNetworkSecurityConfig.cs patches the Gradle build output at build time."
                     : "All Android network settings are already configured correctly.\n\n" +
                       "Your Quest 3 app can stream data to a local HTTP backend.";
 
@@ -128,9 +125,8 @@ namespace VRTraining.Editor
         }
 
         /// <summary>
-        /// Ensures AndroidManifest.xml exists with INTERNET permission,
-        /// usesCleartextTraffic, and networkSecurityConfig reference.
-        /// Returns true if changes were made.
+        /// Ensures AndroidManifest.xml exists with INTERNET permission and
+        /// usesCleartextTraffic="true". Returns true if changes were made.
         /// </summary>
         private static bool EnsureAndroidManifest()
         {
@@ -177,16 +173,6 @@ namespace VRTraining.Editor
                     modified = true;
                     Debug.Log("[VR Training] ✅ Added usesCleartextTraffic=\"true\" to AndroidManifest");
                 }
-
-                var netConfigAttr = appNode.Attributes["android:networkSecurityConfig"];
-                if (netConfigAttr == null)
-                {
-                    SetAttribute(doc, appNode, "android:networkSecurityConfig",
-                        "@xml/network_security_config",
-                        "http://schemas.android.com/apk/res/android");
-                    modified = true;
-                    Debug.Log("[VR Training] ✅ Added networkSecurityConfig reference to AndroidManifest");
-                }
             }
 
             // Check for INTERNET permission
@@ -224,42 +210,6 @@ namespace VRTraining.Editor
         }
 
         /// <summary>
-        /// Ensures network_security_config.xml exists.
-        /// Returns true if the file was created.
-        /// </summary>
-        private static bool EnsureNetworkSecurityConfig()
-        {
-            if (File.Exists(NETWORK_CONFIG_PATH))
-                return false;
-
-            string dir = Path.GetDirectoryName(NETWORK_CONFIG_PATH);
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-
-            string content =
-@"<?xml version=""1.0"" encoding=""utf-8""?>
-<!--
-  Network Security Configuration for VR Training Data Pipeline.
-  Allows cleartext (HTTP) traffic to local network backend servers.
-  
-  Quest 3 communicates with the PC backend over local WiFi using HTTP
-  (not HTTPS) for real-time data streaming. Without this file,
-  Android 9+ blocks all HTTP connections by default.
--->
-<network-security-config>
-    <base-config cleartextTrafficPermitted=""true"">
-        <trust-anchors>
-            <certificates src=""system"" />
-        </trust-anchors>
-    </base-config>
-</network-security-config>";
-
-            File.WriteAllText(NETWORK_CONFIG_PATH, content);
-            Debug.Log("[VR Training] ✅ Created network_security_config.xml (allows HTTP cleartext traffic)");
-            return true;
-        }
-
-        /// <summary>
         /// Creates a default AndroidManifest.xml with all VR Training network settings.
         /// </summary>
         private static void WriteDefaultManifest()
@@ -273,8 +223,7 @@ namespace VRTraining.Editor
       android:label=""@string/app_name""
       android:icon=""@mipmap/app_icon""
       android:allowBackup=""false""
-      android:usesCleartextTraffic=""true""
-      android:networkSecurityConfig=""@xml/network_security_config"">
+      android:usesCleartextTraffic=""true"">
     <activity
         android:theme=""@style/Theme.AppCompat.DayNight.NoActionBar""
         android:configChanges=""locale|fontScale|keyboard|keyboardHidden|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode""
