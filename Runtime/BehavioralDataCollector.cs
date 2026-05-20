@@ -733,7 +733,9 @@ public class BehavioralDataCollector : MonoBehaviour
             using (StreamWriter writer = File.AppendText(strategyLogPath))
             {
                 string behaviors = string.Join("|", signature.keyBehaviors);
-                string line = $"{signature.strategyName},{signature.confidence:F4},{behaviors},{signature.description}";
+                // Quote description field to handle commas in text (RFC 4180)
+                string safeDescription = "\"" + (signature.description ?? "").Replace("\"", "\"\"") + "\"";
+                string line = $"{signature.strategyName},{signature.confidence:F4},{behaviors},{safeDescription}";
                 writer.WriteLine(line);
             }
         }

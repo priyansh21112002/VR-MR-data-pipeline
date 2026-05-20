@@ -160,7 +160,11 @@ def _glob1_sub(sub, pat):
     f = sorted(d.glob(pat))
     if not f:
         return None
-    df = pd.read_csv(f[0], comment='#')
+    try:
+        df = pd.read_csv(f[0], comment='#')
+    except Exception as e:
+        print(f"  ⚠️  Could not parse {f[0].name}: {e}")
+        return None
     return df if len(df) > 0 else None
 
 
